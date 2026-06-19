@@ -64,7 +64,18 @@ function buildAll() {
   const ff = structuredClone(base);
   ff.background = { scripts: FF_BACKGROUND_SCRIPTS };
   ff.browser_specific_settings = {
-    gecko: { id: "virgil@herbary.io", strict_min_version: "115.0" },
+    gecko: {
+      id: "virgil@herbary.io",
+      strict_min_version: "115.0",
+      // AMO-required data-consent declaration. Virgil collects nothing by
+      // default (settings stay local); the opt-in AI transmits a page summary
+      // (websiteContent) including the hostname (browsingActivity) only with
+      // the user's consent — so those are optional, with nothing required.
+      data_collection_permissions: {
+        required: [],
+        optional: ["websiteContent", "browsingActivity"],
+      },
+    },
   };
   emit("firefox", ff);
 
