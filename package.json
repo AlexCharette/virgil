@@ -8,6 +8,7 @@
     "icons": "node tools/gen-icons.mjs",
     "build": "node tools/build.mjs",
     "watch": "node tools/build.mjs --watch",
-    "preview": "node tools/gen-concepts.mjs previews"
+    "preview": "node tools/gen-concepts.mjs previews",
+    "release": "node tools/release.mjs"
   }
 }

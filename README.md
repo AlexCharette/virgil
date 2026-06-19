@@ -107,6 +107,7 @@ manifest each. Everything else is shared — every API call goes through the
 | `npm run watch` | Same as build, then rebuild on every change to `src/`, `vendor/`, or `manifest.json`. |
 | `npm run icons` | Just regenerate the toolbar icons from the sprite. |
 | `npm run preview` | Render the whole character set to `previews/gallery.html`. |
+| `npm run release` | Build the packages and cut a `v<version>` GitHub release (reads the version from `manifest.json`; needs the `gh` CLI). |
 
 ### Pick your guide
 
