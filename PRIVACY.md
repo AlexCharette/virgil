@@ -52,11 +52,34 @@ the page.
   privacy policy, not this one.
 - If you never enable the Oracle, no page data ever leaves your browser.
 
+## Revealing trackers ("The Watchers")
+
+Virgil can show you how many third-party trackers, ad networks, session-replay,
+and fingerprinting services are present on a page. It does this **entirely
+locally** by reading the page's own already-loaded resource list (the standard
+`performance` timing API) and matching hostnames against a built-in list. It
+**blocks nothing, requests nothing, and transmits nothing** — it only counts and
+names what the page already loaded. A running tally of distinct trackers seen is
+kept as a local counter for the popup.
+
+## "Harden my passage" (optional)
+
+If you enable Hardening, Virgil changes **your own browser's** privacy settings —
+e.g. reducing WebRTC IP leakage, disabling hyperlink auditing, blocking
+third-party cookies, and (on Chrome) auto-declining notification prompts. This
+adjusts your browser configuration on your device; it does not collect or send
+any data. The permissions it needs (`privacy`, and on Chrome `contentSettings`)
+are **optional** — Virgil only requests them at the moment you turn Hardening on,
+and releases the settings when you turn it off.
+
 ## Permissions
 
 - **Host access to all sites** — required because Virgil must run on whatever
   page you're viewing to scan it and place the guide.
 - **Storage** — used to save the on-device settings and tallies described above.
+- **Privacy / Content settings (optional)** — requested only when you enable
+  "Harden my passage," to change your browser's own privacy settings. Not used to
+  collect data.
 
 ## What Virgil does NOT do
 

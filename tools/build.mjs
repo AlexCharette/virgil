@@ -63,6 +63,9 @@ function buildAll() {
   // Firefox / Zen — event-page background + gecko settings.
   const ff = structuredClone(base);
   ff.background = { scripts: FF_BACKGROUND_SCRIPTS };
+  // Firefox has `privacy` but not `contentSettings`; drop the latter.
+  if (Array.isArray(ff.optional_permissions))
+    ff.optional_permissions = ff.optional_permissions.filter((p) => p !== "contentSettings");
   ff.browser_specific_settings = {
     gecko: {
       id: "virgil@herbary.io",

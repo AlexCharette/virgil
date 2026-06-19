@@ -56,6 +56,16 @@ websites and suggestive media by warning on and blurring such content.
 > tallies, and (only if the optional AI feature is enabled) the user's API key —
 > all kept on the user's device.
 
+**`privacy` / `contentSettings` (optional permissions):**
+> Requested only when the user enables "Harden my passage." Used to change the
+> user's own browser privacy settings (WebRTC IP-leak handling, hyperlink
+> auditing, third-party cookies; on Chrome, auto-declining notification prompts).
+> Not used to collect or transmit any data. Released when the user turns
+> Hardening off. `contentSettings` is Chrome-only (absent from the Firefox build).
+
+Note: the "Reveal the Watchers" feature needs **no** permission — it reads the
+page's own resource-timing list locally to count trackers and blocks nothing.
+
 **Remote code / "uses remote code" question:** Answer **No**. Virgil executes no
 remotely-hosted code. The optional AI feature only sends a text summary to an
 endpoint and receives a category label back.

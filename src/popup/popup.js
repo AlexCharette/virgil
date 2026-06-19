@@ -23,6 +23,7 @@
     ["blurEnabled", "blur.enabled"],
     ["blurOnAdult", "blur.onAdultPages"],
     ["blurHeuristics", "blur.heuristics"],
+    ["revealWatchers", "privacy.revealWatchers"],
     ["aiEnabled", "ai.enabled"],
   ];
   const TEXTS = [
@@ -52,6 +53,7 @@
     const sum = (bucket) => cats.reduce((t, id) => t + (stats[bucket][id] || 0), 0);
     $("stat-warnings").textContent = sum("warnings");
     $("stat-time").textContent = fmtDuration(sum("seconds"));
+    $("watchers-total").textContent = stats.watchers || 0;
 
     const ledger = $("ledger");
     ledger.replaceChildren();
@@ -192,6 +194,65 @@
     V.setSettings(settings).then(flashSaved);
   }
 
+  const WATCHER_LABELS = {
+    analytics: "Analytics",
+    ads: "Advertising",
+    social: "Social pixel",
+    replay: "Session replay",
+    fingerprint: "Fingerprinting",
+    tag: "Tag manager",
+  };
+
+  function renderWatchers(rep) {
+    const el = $("watchersBody");
+    if (!rep) {
+      el.textContent = "Not scanned on this page.";
+      return;
+    }
+    if (!rep.count) {
+      el.textContent = "No watchers here — the road is unobserved.";
+      return;
+    }
+    el.replaceChildren();
+    const head = document.createElement("div");
+    head.className = "watchers-count";
+    head.textContent =
+      rep.count === 1 ? "1 watcher revealed" : rep.count + " watchers revealed";
+    el.appendChild(head);
+    for (const cat of Object.keys(rep.byCategory)) {
+      const row = document.createElement("div");
+      row.className = "watcher-row";
+      const k = document.createElement("span");
+      k.className = "watcher-cat";
+      k.textContent = WATCHER_LABELS[cat] || cat;
+      const v = document.createElement("span");
+      v.className = "watcher-names";
+      v.textContent = rep.byCategory[cat].join(", ");
+      row.append(k, v);
+      el.appendChild(row);
+    }
+  }
+
+  async function loadWatchers() {
+    try {
+      const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+      const tab = tabs && tabs[0];
+      if (!tab || tab.id == null) return renderWatchers(null);
+      const rep = await browser.tabs
+        .sendMessage(tab.id, { type: "getWatchers" })
+        .catch(() => null);
+      renderWatchers(rep);
+    } catch (e) {
+      renderWatchers(null);
+    }
+  }
+
+  // Optional permissions actually available in this browser build.
+  function hardenPerms() {
+    const avail = browser.runtime.getManifest().optional_permissions || [];
+    return ["privacy", "contentSettings"].filter((p) => avail.includes(p));
+  }
+
   function bindControls() {
     for (const [id, path] of TOGGLES)
       $(id).addEventListener("change", (e) => {
@@ -207,6 +268,29 @@
       settings.lingerMinutes = Math.max(0, parseInt(e.target.value, 10) || 0);
       save();
     });
+    // Harden needs an optional permission — request it on enable (user gesture).
+    $("harden").addEventListener("change", async (e) => {
+      if (e.target.checked) {
+        let granted = false;
+        try {
+          granted = await browser.permissions.request({ permissions: hardenPerms() });
+        } catch (err) {
+          granted = false;
+        }
+        if (!granted) {
+          e.target.checked = false;
+          return;
+        }
+        settings.privacy.harden = true;
+        save();
+      } else {
+        settings.privacy.harden = false;
+        save();
+        try {
+          browser.permissions.remove({ permissions: hardenPerms() });
+        } catch (err) {}
+      }
+    });
     $("reset").addEventListener("click", () => {
       browser.runtime
         .sendMessage({ type: "resetStats" })
@@ -218,6 +302,7 @@
     for (const [id, path] of TOGGLES) $(id).checked = getPath(settings, path);
     for (const [id, path] of TEXTS) $(id).value = getPath(settings, path);
     $("lingerMinutes").value = settings.lingerMinutes;
+    $("harden").checked = settings.privacy.harden;
   }
 
   async function init() {
@@ -229,6 +314,7 @@
     renderThemePicker();
     renderPicker();
     renderPaused();
+    loadWatchers();
     bindControls();
     browser.runtime
       .sendMessage({ type: "getStats" })

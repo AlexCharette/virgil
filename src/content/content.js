@@ -242,6 +242,8 @@
     V.hero.setStyle(settings.style);
     if (!isExempt() && settings.blur && settings.blur.enabled && V.censor)
       V.censor.start(settings.blur);
+    if (!isExempt() && settings.privacy && settings.privacy.revealWatchers && V.watchers)
+      V.watchers.start();
     watchUrl();
     evaluate();
 

@@ -21,6 +21,11 @@
       minSize: 80, // ignore media smaller than this (px)
       model: { enabled: false }, // Tier C: on-device classifier (future)
     },
+    // Privacy guardianship.
+    privacy: {
+      revealWatchers: true, // count trackers/replay/fingerprinters on each page
+      harden: false, // flip browser privacy settings (needs optional permission)
+    },
     // Tier 3 — optional, off until the wayfarer provides a key.
     ai: {
       enabled: false,
@@ -40,6 +45,7 @@
       ...d,
       ...s,
       ai: { ...d.ai, ...(s.ai || {}) },
+      privacy: { ...d.privacy, ...(s.privacy || {}) },
       blur: {
         ...d.blur,
         ...(s.blur || {}),

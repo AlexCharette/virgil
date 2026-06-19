@@ -33,7 +33,57 @@ function zeroed() {
 }
 
 function blankStats() {
-  return { since: Date.now(), warnings: zeroed(), seconds: zeroed() };
+  return { since: Date.now(), warnings: zeroed(), seconds: zeroed(), watchers: 0 };
+}
+
+async function addWatchers(n) {
+  const s = await getStats();
+  s.watchers = (s.watchers || 0) + n;
+  await browser.storage.local.set({ [STATS_KEY]: s });
+}
+
+// --- privacy hardening (Feature 2) ----------------------------------------
+// Flips protective browser settings via the optional `privacy` API and, on
+// Chrome, auto-denies notification prompts via `contentSettings`. Everything is
+// feature-detected: if the optional permission isn't granted, browser.privacy /
+// browser.contentSettings are undefined and this is a safe no-op.
+function applyHardening(on) {
+  const set = (node, key, value) => {
+    try {
+      const s = node && node[key];
+      if (s && s.set) on ? s.set({ value }) : s.clear({});
+    } catch (e) {}
+  };
+  const P = typeof browser !== "undefined" ? browser.privacy : undefined;
+  if (P) {
+    if (P.network) {
+      set(P.network, "webRTCIPHandlingPolicy", "default_public_interface_only");
+      set(P.network, "networkPredictionEnabled", false);
+    }
+    if (P.websites) {
+      set(P.websites, "hyperlinkAuditingEnabled", false);
+      // third-party cookies: Chrome boolean vs Firefox cookieConfig vs nothing
+      if (P.websites.thirdPartyCookiesAllowed) {
+        set(P.websites, "thirdPartyCookiesAllowed", false);
+      } else if (P.websites.cookieConfig) {
+        try {
+          on
+            ? P.websites.cookieConfig.set({ value: { behavior: "reject_third_party" } })
+            : P.websites.cookieConfig.clear({});
+        } catch (e) {}
+      }
+      // Firefox bonus: turn on built-in tracking protection.
+      set(P.websites, "trackingProtectionMode", "always");
+    }
+  }
+  try {
+    const cs = typeof browser !== "undefined" ? browser.contentSettings : undefined;
+    if (cs && cs.notifications) {
+      on
+        ? cs.notifications.set({ primaryPattern: "<all_urls>", setting: "block" })
+        : cs.notifications.clear({});
+    }
+  } catch (e) {}
 }
 
 async function getStats() {
@@ -201,6 +251,9 @@ browser.runtime.onMessage.addListener((msg, sender) => {
     case "time":
       return addSeconds(msg.category, msg.seconds || 0);
 
+    case "watchersSeen":
+      return addWatchers(msg.count || 0);
+
     case "getStats":
       return getStats();
 
@@ -222,6 +275,10 @@ browser.runtime.onInstalled.addListener(() => {
   V.getSettings().then((s) => V.setSettings(s));
 });
 
-// Keep the badge colour aligned with the chosen theme.
-V.getSettings().then((s) => V.applyTheme(s.theme));
-V.onSettingsChange((s) => V.applyTheme(s.theme));
+// Keep the theme (badge colour) and privacy hardening aligned with settings.
+function applyFromSettings(s) {
+  V.applyTheme(s.theme);
+  applyHardening(!!(s.privacy && s.privacy.harden));
+}
+V.getSettings().then(applyFromSettings);
+V.onSettingsChange(applyFromSettings);

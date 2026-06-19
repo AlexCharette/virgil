@@ -51,6 +51,20 @@ blur-first seam is already there. A remote vision API is intentionally *not*
 used: it would mean per-image network cost and sending your browsing to a third
 party, against the "AI only where necessary" goal.
 
+## Privacy — revealing & hardening
+
+Virgil also guards against the *other* snare — surveillance:
+
+- **Reveal the Watchers** — counts and names the third-party trackers, ad
+  networks, session-replay, and fingerprinting services on each page, read
+  **locally** from the page's own resource list (no blocking, no network, no
+  permission). Shown in the popup, with a running "watchers revealed" tally.
+- **Harden my passage** *(opt-in)* — flips your browser's own privacy settings
+  (WebRTC IP-leak handling, hyperlink auditing, third-party cookies; on Chrome,
+  auto-declining notification prompts; on Firefox, built-in tracking protection).
+  Uses the `privacy`/`contentSettings` permissions, requested **only** when you
+  enable it, so the base install stays at `storage` + host access.
+
 ## Install (Chrome / Edge, unpacked)
 
 1. Generate the toolbar icons (one-time, needs Node ≥ 18):

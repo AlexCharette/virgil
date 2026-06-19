@@ -273,6 +273,42 @@ h2 {
   margin: 4px 0;
 }
 
+.watchers {
+  background: var(--crypt);
+  border: 1px solid var(--stone);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.watchers .watchers-count {
+  color: var(--glow);
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.watcher-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+  line-height: 1.35;
+}
+
+.watcher-cat {
+  flex: 0 0 84px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-size: 9px;
+  padding-top: 1px;
+}
+
+.watcher-names {
+  flex: 1;
+  color: var(--ink);
+}
+
 details.ai {
   border: 1px solid var(--stone);
   border-radius: 6px;
