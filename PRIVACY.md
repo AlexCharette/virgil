@@ -56,7 +56,6 @@ the page.
 
 - **Host access to all sites** — required because Virgil must run on whatever
   page you're viewing to scan it and place the guide.
-- **Tabs** — used to show the per-tab warning badge on the toolbar icon.
 - **Storage** — used to save the on-device settings and tallies described above.
 
 ## What Virgil does NOT do

@@ -51,11 +51,6 @@ websites and suggestive media by warning on and blurring such content.
 > in advance which sites the user will visit, so it must run on all pages. All
 > scanning happens locally in the browser.
 
-**`tabs`:**
-> Used solely to display a per-tab status badge on the toolbar icon indicating
-> when the current tab is a flagged page. Virgil does not read browsing history
-> or tab URLs beyond the active tab it is already running in.
-
 **`storage`:**
 > Stores the user's own settings, paused-site/allowed-page lists, local usage
 > tallies, and (only if the optional AI feature is enabled) the user's API key —
