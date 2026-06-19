@@ -80,9 +80,10 @@ endpoint and receives a category label back.
 - Provide the privacy policy URL.
 - AMO's **data-consent** requirement is satisfied in-manifest:
   `browser_specific_settings.gecko.data_collection_permissions` declares
-  `required: []` (nothing collected by default) and
-  `optional: ["websiteContent", "browsingActivity"]` (only the opt-in AI sends a
-  page summary). This is injected by `tools/build.mjs` into the Firefox build.
+  `required: ["none"]` (nothing collected by default — the marker for no required
+  collection) and `optional: ["websiteContent", "browsingActivity"]` (only the
+  opt-in AI sends a page summary). Injected by `tools/build.mjs` into the Firefox
+  build.
 
 **Edge Add-ons:** mirrors the Chrome answers; reuse the same disclosures.
 

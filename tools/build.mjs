@@ -68,11 +68,12 @@ function buildAll() {
       id: "virgil@herbary.io",
       strict_min_version: "115.0",
       // AMO-required data-consent declaration. Virgil collects nothing by
-      // default (settings stay local); the opt-in AI transmits a page summary
+      // default (settings stay local) → required is the "none" marker (the
+      // array must be non-empty). The opt-in AI transmits a page summary
       // (websiteContent) including the hostname (browsingActivity) only with
-      // the user's consent — so those are optional, with nothing required.
+      // the user's consent → those are optional.
       data_collection_permissions: {
-        required: [],
+        required: ["none"],
         optional: ["websiteContent", "browsingActivity"],
       },
     },
