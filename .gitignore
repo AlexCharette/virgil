@@ -1,0 +1,8 @@
+# Build output (regenerate with `npm run build`)
+dist/
+
+# Preview gallery (regenerate with `npm run preview`)
+previews/
+
+# OS cruft
+.DS_Store

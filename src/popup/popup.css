@@ -1,0 +1,388 @@
+:root {
+  --void: #131520;
+  --crypt: #1b1f32;
+  --stone: #252a41;
+  --ink: #b8cdfe;
+  --ink-dim: #627af4;
+  --cloak: #4961da;
+  --steel: #7289fd;
+  --glow: #86e0f9;
+  --peril: #ec407a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 320px;
+  background: var(--void);
+  color: var(--ink);
+  font-family: ui-monospace, "Cascadia Mono", "DejaVu Sans Mono", Menlo, Consolas,
+    monospace;
+  font-size: 13px;
+}
+
+#app {
+  padding: 14px 14px 10px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+#portrait {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 5px var(--glow));
+}
+
+.title h1 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.tagline {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.picker {
+  margin-bottom: 12px;
+}
+
+.style-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(46px, 1fr));
+  gap: 8px;
+}
+
+.style-opt {
+  background: var(--crypt);
+  border: 1px solid var(--stone);
+  border-radius: 6px;
+  padding: 6px 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.style-opt img {
+  width: 40px;
+  height: 50px;
+  image-rendering: pixelated;
+}
+
+.style-opt span {
+  font-size: 9px;
+  color: var(--ink-dim);
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.style-opt.sel {
+  border-color: var(--glow);
+  box-shadow: 0 0 0 1px var(--glow) inset;
+}
+
+.style-opt.sel span {
+  color: var(--glow);
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+  gap: 8px;
+}
+
+.theme-opt {
+  background: var(--crypt);
+  border: 1px solid var(--stone);
+  border-radius: 6px;
+  padding: 6px 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.theme-sw {
+  width: 100%;
+  height: 22px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.theme-sw i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: block;
+}
+
+.theme-name {
+  font-size: 9px;
+  color: var(--ink-dim);
+  letter-spacing: 0.3px;
+}
+
+.theme-opt.sel {
+  border-color: var(--glow);
+  box-shadow: 0 0 0 1px var(--glow) inset;
+}
+
+.theme-opt.sel .theme-name {
+  color: var(--glow);
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stat {
+  flex: 1;
+  background: var(--crypt);
+  border: 1px solid var(--stone);
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+}
+
+.stat-num {
+  display: block;
+  font-size: 20px;
+  color: var(--glow);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  display: block;
+  font-size: 10px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-top: 3px;
+}
+
+.ledger {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ledger li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-left: 3px solid var(--steel);
+  background: rgba(37, 42, 65, 0.4);
+}
+
+.ledger li .count {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.controls,
+.paused {
+  margin-bottom: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--stone);
+}
+
+.inline input[type="number"] {
+  width: 48px;
+}
+
+h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-dim);
+  margin: 0 0 6px;
+}
+
+#pausedList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#pausedList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--crypt);
+  border: 1px solid var(--stone);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+#pausedList .ignore-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
+  margin-right: 8px;
+}
+
+#pausedList button {
+  background: transparent;
+  border: none;
+  color: var(--peril);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.muted {
+  color: var(--ink-dim);
+  font-size: 11px;
+  margin: 4px 0;
+}
+
+details.ai {
+  border: 1px solid var(--stone);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--glow);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
+}
+
+.field span {
+  font-size: 10px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"] {
+  background: var(--void);
+  border: 1px solid var(--stone);
+  color: var(--ink);
+  border-radius: 4px;
+  padding: 5px 7px;
+  font: inherit;
+  font-size: 12px;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--glow);
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  width: 36px;
+  height: 18px;
+  background: var(--stone);
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ink-dim);
+  transition: transform 0.15s, background 0.15s;
+}
+
+input[type="checkbox"]:checked {
+  background: var(--cloak);
+}
+
+input[type="checkbox"]:checked::after {
+  transform: translateX(18px);
+  background: var(--glow);
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+button.ghost {
+  background: transparent;
+  border: 1px solid var(--stone);
+  color: var(--ink-dim);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+button.ghost:hover {
+  border-color: var(--peril);
+  color: var(--peril);
+}
+
+.saved {
+  font-size: 11px;
+  color: var(--glow);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.saved.show {
+  opacity: 1;
+}

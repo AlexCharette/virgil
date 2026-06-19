@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Virgil</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <img id="portrait" alt="Virgil" />
+        <div class="title">
+          <h1>Virgil</h1>
+          <p class="tagline">Your guide through the dark forest</p>
+        </div>
+      </header>
+
+      <section class="stats">
+        <div class="stat">
+          <span id="stat-time" class="stat-num">—</span>
+          <span class="stat-label">time in the depths</span>
+        </div>
+        <div class="stat">
+          <span id="stat-warnings" class="stat-num">—</span>
+          <span class="stat-label">warnings given</span>
+        </div>
+      </section>
+
+      <section class="paused">
+        <h2>Sites &amp; pages you've allowed</h2>
+        <ul id="pausedList"></ul>
+        <p id="pausedEmpty" class="muted">None — he watches everywhere.</p>
+      </section>
+
+      <ul class="ledger" id="ledger"></ul>
+
+      <section class="controls">
+        <label class="row switch">
+          <span>Virgil stands watch</span>
+          <input type="checkbox" id="enabled" />
+        </label>
+        <label class="row switch">
+          <span>Greet me on safe roads</span>
+          <input type="checkbox" id="greetOnSafe" />
+        </label>
+        <label class="row">
+          <span>Warn after</span>
+          <span class="inline">
+            <input type="number" id="lingerMinutes" min="0" max="120" /> min
+          </span>
+        </label>
+      </section>
+
+      <section class="controls">
+        <h2>The Censor</h2>
+        <label class="row switch">
+          <span>Blur suggestive media</span>
+          <input type="checkbox" id="blurEnabled" />
+        </label>
+        <label class="row switch">
+          <span>Veil everything on adult sites</span>
+          <input type="checkbox" id="blurOnAdult" />
+        </label>
+        <label class="row switch">
+          <span>Catch lewd media anywhere</span>
+          <input type="checkbox" id="blurHeuristics" />
+        </label>
+      </section>
+
+      <section class="picker">
+        <h2>Colour scheme</h2>
+        <div id="themeGrid" class="theme-grid"></div>
+      </section>
+
+      <section class="picker">
+        <h2>Choose your guide</h2>
+        <div id="styleGrid" class="style-grid"></div>
+      </section>
+
+      <details class="ai">
+        <summary>Oracle (optional AI)</summary>
+        <p class="muted">
+          For pages Virgil can't name on his own, consult an
+          OpenRouter-compatible model. Your key stays on this device.
+        </p>
+        <label class="row switch">
+          <span>Consult the Oracle</span>
+          <input type="checkbox" id="aiEnabled" />
+        </label>
+        <label class="field">
+          <span>Endpoint</span>
+          <input
+            type="text"
+            id="aiEndpoint"
+            placeholder="https://openrouter.ai/api/v1/chat/completions"
+          />
+        </label>
+        <label class="field">
+          <span>Model</span>
+          <input type="text" id="aiModel" placeholder="openai/gpt-4o-mini" />
+        </label>
+        <label class="field">
+          <span>API key</span>
+          <input type="password" id="aiKey" placeholder="sk-or-..." />
+        </label>
+      </details>
+
+      <footer>
+        <button id="reset" class="ghost">Reset the ledger</button>
+        <span id="saved" class="saved">saved</span>
+      </footer>
+    </div>
+
+    <script src="../../vendor/browser-polyfill.min.js"></script>
+    <script src="../shared/palette.js"></script>
+    <script src="../shared/categories.js"></script>
+    <script src="../shared/settings.js"></script>
+    <script src="../content/sprite.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

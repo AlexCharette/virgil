@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Virgil — Guide Through the Inferno",
+  "version": "0.1.0",
+  "author": "Herbary",
+  "homepage_url": "https://herbary.io/virgil",
+  "description": "A pixel-art guide that warns you past social media, infinite scroll & adult content — and blurs suggestive media.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background/service-worker.js"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "Virgil",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "vendor/browser-polyfill.min.js",
+        "src/shared/palette.js",
+        "src/shared/categories.js",
+        "src/shared/blocklist.js",
+        "src/shared/classify.js",
+        "src/shared/settings.js",
+        "src/content/heuristics.js",
+        "src/content/sprite.js",
+        "src/content/hero.js",
+        "src/content/censor.js",
+        "src/content/content.js"
+      ],
+      "css": ["src/content/hero.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

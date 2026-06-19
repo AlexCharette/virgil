@@ -1,0 +1,13 @@
+{
+  "name": "virgil",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A pixel-art companion that guides you past the web's attention traps. Chrome/Edge + Firefox/Zen.",
+  "scripts": {
+    "icons": "node tools/gen-icons.mjs",
+    "build": "node tools/build.mjs",
+    "watch": "node tools/build.mjs --watch",
+    "preview": "node tools/gen-concepts.mjs previews"
+  }
+}
