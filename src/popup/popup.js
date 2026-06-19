@@ -54,7 +54,7 @@
     $("stat-time").textContent = fmtDuration(sum("seconds"));
 
     const ledger = $("ledger");
-    ledger.innerHTML = "";
+    ledger.replaceChildren();
     for (const id of cats) {
       const cat = V.CATEGORIES[id];
       const li = document.createElement("li");
@@ -86,7 +86,7 @@
 
   function renderThemePicker() {
     const grid = $("themeGrid");
-    grid.innerHTML = "";
+    grid.replaceChildren();
     for (const t of V.THEME_LIST) {
       const opt = document.createElement("button");
       opt.type = "button";
@@ -119,7 +119,7 @@
 
   function renderPicker() {
     const grid = $("styleGrid");
-    grid.innerHTML = "";
+    grid.replaceChildren();
     for (const c of V.CHARACTER_LIST) {
       const opt = document.createElement("button");
       opt.type = "button";
@@ -155,7 +155,7 @@
   function renderPaused() {
     const list = $("pausedList");
     const empty = $("pausedEmpty");
-    list.innerHTML = "";
+    list.replaceChildren();
     const hosts = settings.pausedHosts || [];
     const urls = settings.allowedUrls || [];
     empty.style.display = hosts.length || urls.length ? "none" : "block";

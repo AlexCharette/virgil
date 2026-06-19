@@ -310,11 +310,9 @@
     return { W, H, buf: cv.buf };
   };
 
-  // Render to inline SVG (used by the live hero). Horizontal runs are merged
-  // into single <rect>s to keep the markup small.
-  V.renderSprite = function (glowHex, styleId) {
-    const { buf } = V.drawCharacter(styleId, glowHex);
-    let rects = "";
+  // Walk the buffer, merging horizontal runs of identical pixels into spans.
+  // cb(x, y, run, "#rrggbb", alpha) — shared by both renderers below.
+  function eachRun(buf, cb) {
     for (let y = 0; y < H; y++) {
       let x = 0;
       while (x < W) {
@@ -331,16 +329,48 @@
           if (buf[j + 3] !== a || buf[j] !== r || buf[j + 1] !== gg || buf[j + 2] !== b) break;
           run++;
         }
-        const fill = "#" + hx2(r) + hx2(gg) + hx2(b);
-        const op = a < 255 ? ` fill-opacity="${(a / 255).toFixed(3)}"` : "";
-        rects += `<rect x="${x}" y="${y}" width="${run}" height="1" fill="${fill}"${op}/>`;
+        cb(x, y, run, "#" + hx2(r) + hx2(gg) + hx2(b), a);
         x += run;
       }
     }
+  }
+
+  // Render to an inline-SVG STRING — used for the popup's <img src> data URI.
+  V.renderSprite = function (glowHex, styleId) {
+    const { buf } = V.drawCharacter(styleId, glowHex);
+    let rects = "";
+    eachRun(buf, (x, y, run, fill, a) => {
+      const op = a < 255 ? ` fill-opacity="${(a / 255).toFixed(3)}"` : "";
+      rects += `<rect x="${x}" y="${y}" width="${run}" height="1" fill="${fill}"${op}/>`;
+    });
     return (
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" ` +
       `shape-rendering="crispEdges" width="${W}" height="${H}">${rects}</svg>`
     );
+  };
+
+  // Render to a real SVG DOM NODE — used for the live hero, so we never assign
+  // a dynamic string to innerHTML (clears the AMO "unsafe innerHTML" warning and
+  // skips an HTML parse). Requires a DOM; only called in the browser.
+  const SVGNS = "http://www.w3.org/2000/svg";
+  V.renderSpriteNode = function (glowHex, styleId) {
+    const { buf } = V.drawCharacter(styleId, glowHex);
+    const svg = document.createElementNS(SVGNS, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("shape-rendering", "crispEdges");
+    svg.setAttribute("width", String(W));
+    svg.setAttribute("height", String(H));
+    eachRun(buf, (x, y, run, fill, a) => {
+      const rect = document.createElementNS(SVGNS, "rect");
+      rect.setAttribute("x", x);
+      rect.setAttribute("y", y);
+      rect.setAttribute("width", run);
+      rect.setAttribute("height", 1);
+      rect.setAttribute("fill", fill);
+      if (a < 255) rect.setAttribute("fill-opacity", (a / 255).toFixed(3));
+      svg.appendChild(rect);
+    });
+    return svg;
   };
 
   V.spriteDataUri = function (glowHex, styleId) {

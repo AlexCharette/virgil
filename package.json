@@ -1,6 +1,6 @@
 {
   "name": "virgil",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "type": "module",
   "description": "A pixel-art companion that guides you past the web's attention traps. Chrome/Edge + Firefox/Zen.",

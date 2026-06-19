@@ -15,7 +15,7 @@
   let currentSeverity = "safe";
 
   function render() {
-    if (sprite) sprite.innerHTML = V.renderSprite(currentGlow, currentStyle);
+    if (sprite) sprite.replaceChildren(V.renderSpriteNode(currentGlow, currentStyle));
   }
   function veilOn() {
     if (veil) veil.classList.add("virgil-veil-on");
@@ -63,7 +63,7 @@
     sprite.id = "virgil-sprite";
     sprite.setAttribute("role", "img");
     sprite.setAttribute("aria-label", "Virgil, your guide");
-    sprite.innerHTML = V.renderSprite(currentGlow, currentStyle);
+    sprite.appendChild(V.renderSpriteNode(currentGlow, currentStyle));
 
     root.append(bubble, sprite);
 
@@ -138,7 +138,7 @@
   H.speak = function ({ text, actions = [], sticky = true, autoHushMs }) {
     if (!root) H.mount();
     bubbleText.textContent = text;
-    bubbleActions.innerHTML = "";
+    bubbleActions.replaceChildren();
     for (const a of actions) {
       const btn = document.createElement("button");
       btn.textContent = a.label;
