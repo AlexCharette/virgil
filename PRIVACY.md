@@ -73,4 +73,4 @@ pages.
 
 ## Contact
 
-Questions about this policy: **a.charette@kiimkern.com**
+Questions about this policy: **virgil.0o5z2@passmail.net**
