@@ -299,6 +299,18 @@
   ];
   const BY_ID = Object.fromEntries(CHARACTERS.map((c) => [c.id, c]));
 
+  // Where each figure's light lives, as a fraction of the 32x40 grid. The hero
+  // anchors its flickering light layer here so the flame sits on the lantern /
+  // beacon / orb — not floating in the middle of the box. Kept beside the art.
+  V.LIGHT_SOURCE = {
+    "lantern-bearer": { x: 23 / W, y: 12 / H },
+    sentinel: { x: 16 / W, y: 24 / H },
+    wisp: { x: 16 / W, y: 22 / H },
+    familiar: { x: 26 / W, y: 25 / H },
+    "guardian-angel": { x: 16 / W, y: 22 / H },
+  };
+  V.lightSource = (styleId) => V.LIGHT_SOURCE[styleId] || { x: 0.5, y: 0.5 };
+
   // Lightweight list for the popup picker.
   V.CHARACTER_LIST = CHARACTERS.map(({ id, name, desc }) => ({ id, name, desc }));
 

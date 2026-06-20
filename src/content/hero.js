@@ -9,6 +9,7 @@
   const H = (V.hero = {});
 
   let root, sprite, bubble, bubbleName, bubbleText, bubbleActions, veil, eyes, sigil;
+  let light, embers;
   let speakTimer = null;
   let eyesTimer = null;
   let currentGlow = P.glow;
@@ -18,8 +19,21 @@
   let watcherCount = 0;
   let eyesPlayed = false;
 
+  const prefersReduced = () =>
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   function render() {
     if (sprite) sprite.replaceChildren(V.renderSpriteNode(currentGlow, currentStyle));
+    setLightSource();
+  }
+
+  // Anchor the flickering light layer on the figure's lantern / beacon / orb.
+  function setLightSource() {
+    if (!light) return;
+    const ls = V.lightSource(currentStyle);
+    light.style.left = (ls.x * 100).toFixed(1) + "%";
+    light.style.top = (ls.y * 100).toFixed(1) + "%";
   }
   function veilOn() {
     if (veil) veil.classList.add("virgil-veil-on");
@@ -46,14 +60,20 @@
 
   // --- the Watchers indicator: pixel eyes peering from the dark ------------
   const SVGNS = "http://www.w3.org/2000/svg";
-  const EYE = [".SSSSS.", "SSSPSSS", "SSPPPSS", "SSSPSSS", ".SSSSS."];
-  function makeEye() {
+  // A few eye shapes so the watchers don't all stare back identically.
+  const EYES = [
+    [".SSSSS.", "SSSPSSS", "SSPPPSS", "SSSPSSS", ".SSSSS."], // round
+    [".SSSSS.", "SSSPSSS", "SSSPSSS", "SSSPSSS", ".SSSSS."], // slit
+    [".SSSSS.", "SSSSSSS", "SSPPPSS", "SSSSSSS", ".SSSSS."], // wide
+  ];
+  function makeEye(pattern) {
+    const pat = pattern || EYES[0];
     const svg = document.createElementNS(SVGNS, "svg");
     svg.setAttribute("viewBox", "0 0 7 5");
     svg.setAttribute("class", "virgil-eye-svg");
-    for (let y = 0; y < EYE.length; y++)
-      for (let x = 0; x < EYE[y].length; x++) {
-        const ch = EYE[y][x];
+    for (let y = 0; y < pat.length; y++)
+      for (let x = 0; x < pat[y].length; x++) {
+        const ch = pat[y][x];
         if (ch === ".") continue;
         const r = document.createElementNS(SVGNS, "rect");
         r.setAttribute("x", x);
@@ -66,31 +86,38 @@
     return svg;
   }
 
+  // A point on a random screen edge — returns viewport pixel coords (the eye's
+  // centre) so the web threads can be drawn back to Virgil.
   function edgePlacement() {
-    const r = () => (8 + Math.random() * 80).toFixed(1) + "%";
+    const W0 = window.innerWidth, H0 = window.innerHeight, m = 18;
+    const at = (lo, hi) => lo + Math.random() * (hi - lo);
     switch (Math.floor(Math.random() * 4)) {
-      case 0: return { top: "14px", left: r() };
-      case 1: return { bottom: "14px", left: r() };
-      case 2: return { left: "14px", top: r() };
-      default: return { right: "14px", top: r() };
+      case 0: return { x: at(W0 * 0.08, W0 * 0.88), y: m };
+      case 1: return { x: at(W0 * 0.08, W0 * 0.88), y: H0 - m };
+      case 2: return { x: m, y: at(H0 * 0.08, H0 * 0.88) };
+      default: return { x: W0 - m, y: at(H0 * 0.08, H0 * 0.88) };
     }
   }
 
-  // One-shot: a clutch of eyes blink open at the edges, then fade. Count-scaled.
+  // One-shot: a clutch of eyes blink open at the edges, then fade. Count-scaled,
+  // each linked back to Virgil by a faint thread that thickens with the count.
   function playEyes(n) {
-    if (!eyes) return;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      return; // respect reduced motion — the sigil still conveys it
+    if (!eyes || prefersReduced()) return; // the sigil still conveys the count
     eyes.replaceChildren();
     const k = Math.min(Math.max(2, n), 6);
+    const pts = [];
     for (let i = 0; i < k; i++) {
+      const p = edgePlacement();
+      pts.push(p);
       const e = document.createElement("div");
       e.className = "virgil-eye";
-      Object.assign(e.style, edgePlacement());
+      e.style.left = (p.x - 15).toFixed(0) + "px";
+      e.style.top = (p.y - 11).toFixed(0) + "px";
       e.style.animationDelay = (Math.random() * 0.6).toFixed(2) + "s";
-      e.appendChild(makeEye());
+      e.appendChild(makeEye(EYES[Math.floor(Math.random() * EYES.length)]));
       eyes.appendChild(e);
     }
+    drawWeb(pts, n);
     eyes.classList.add("virgil-eyes-on");
     clearTimeout(eyesTimer);
     eyesTimer = setTimeout(() => {
@@ -99,6 +126,36 @@
         eyes.replaceChildren();
       }
     }, 3400);
+  }
+
+  // Faint threads from each eye toward Virgil — the watchers' web, denser and
+  // brighter the more of them there are.
+  function drawWeb(pts, n) {
+    if (!eyes || !pts.length) return;
+    const W0 = window.innerWidth, H0 = window.innerHeight;
+    let ax = W0 - 66, ay = H0 - 66;
+    if (root) {
+      const r = root.getBoundingClientRect();
+      if (r.width) { ax = r.left + r.width / 2; ay = r.top + r.height / 2; }
+    }
+    const svg = document.createElementNS(SVGNS, "svg");
+    svg.setAttribute("class", "virgil-web");
+    svg.setAttribute("viewBox", `0 0 ${W0} ${H0}`);
+    svg.setAttribute("preserveAspectRatio", "none");
+    const w = Math.min(1.6, 0.4 + n * 0.12).toFixed(2);
+    const op = Math.min(0.34, 0.08 + n * 0.03).toFixed(2);
+    for (const p of pts) {
+      const ln = document.createElementNS(SVGNS, "line");
+      ln.setAttribute("x1", p.x.toFixed(0));
+      ln.setAttribute("y1", p.y.toFixed(0));
+      ln.setAttribute("x2", ax.toFixed(0));
+      ln.setAttribute("y2", ay.toFixed(0));
+      ln.setAttribute("stroke", V.palette.glow);
+      ln.setAttribute("stroke-width", w);
+      ln.setAttribute("stroke-opacity", op);
+      svg.appendChild(ln);
+    }
+    eyes.appendChild(svg);
   }
 
   function updateSigil() {
@@ -112,10 +169,48 @@
       sigil.title =
         watcherCount + (watcherCount === 1 ? " watcher is" : " watchers are") +
         " here — open Virgil to see them.";
+      sigil.classList.toggle("virgil-sigil-alarm", watcherCount >= 5);
       sigil.hidden = false;
     } else {
+      sigil.classList.remove("virgil-sigil-alarm");
       sigil.hidden = true;
     }
+  }
+
+  // --- the lantern light: flicker, bloom, and warning embers ----------------
+  function bloomLight() {
+    if (!light) return;
+    light.classList.remove("virgil-bloom");
+    void light.offsetWidth; // restart the one-shot flare
+    light.classList.add("virgil-bloom");
+  }
+
+  function spawnEmbers() {
+    if (!embers) return;
+    embers.replaceChildren();
+    const ls = V.lightSource(currentStyle);
+    for (let i = 0; i < 8; i++) {
+      const s = document.createElement("span");
+      s.className = "virgil-ember";
+      s.style.left = (ls.x * 100 + (Math.random() * 16 - 8)).toFixed(1) + "%";
+      s.style.top = (ls.y * 100 + (Math.random() * 10 - 5)).toFixed(1) + "%";
+      s.style.setProperty("--dx", (Math.random() * 16 - 8).toFixed(0) + "px");
+      s.style.setProperty("--dy", (-30 - Math.random() * 34).toFixed(0) + "px");
+      s.style.setProperty("--dur", (2.6 + Math.random() * 1.8).toFixed(2) + "s");
+      s.style.animationDelay = (Math.random() * 2).toFixed(2) + "s";
+      embers.appendChild(s);
+    }
+  }
+
+  function clearEmbers() {
+    if (embers) embers.replaceChildren();
+  }
+
+  // The "raise the lantern" moment: flare the light and loose a few embers.
+  function escalate() {
+    if (prefersReduced()) return; // the static pool still appears via CSS
+    bloomLight();
+    spawnEmbers();
   }
 
   H.mount = function () {
@@ -143,7 +238,13 @@
     sprite.setAttribute("aria-label", "Virgil, your guide");
     sprite.appendChild(V.renderSpriteNode(currentGlow, currentStyle));
 
-    root.append(bubble, sprite);
+    // The flickering lantern light (behind the figure) and the warning embers.
+    light = document.createElement("div");
+    light.id = "virgil-light";
+    embers = document.createElement("div");
+    embers.id = "virgil-embers";
+
+    root.append(light, sprite, embers, bubble);
 
     veil = document.createElement("div");
     veil.id = "virgil-veil";
@@ -162,6 +263,7 @@
     host.appendChild(root);
 
     setThemeVars();
+    setLightSource();
     enableDrag();
     restorePosition();
 
@@ -189,6 +291,7 @@
     if (root) {
       root.style.setProperty("--virgil-glow", sev.color);
       root.classList.toggle("virgil-alert", severity === "peril");
+      root.classList.toggle("virgil-warn", isWarning());
     }
     if (veil) veil.style.setProperty("--virgil-veil-tint", sev.veilTint);
   };
@@ -253,6 +356,8 @@
       bubbleActions.appendChild(btn);
     }
     root.classList.add("virgil-speaking");
+    if (isWarning()) escalate();
+    else clearEmbers();
 
     clearTimeout(speakTimer);
     const ms = autoHushMs != null ? autoHushMs : sticky ? 0 : 7000;
@@ -262,6 +367,7 @@
   H.hush = function () {
     if (root) root.classList.remove("virgil-speaking");
     clearTimeout(speakTimer);
+    clearEmbers();
     veilOff();
   };
 

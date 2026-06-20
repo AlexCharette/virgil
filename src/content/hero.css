@@ -126,9 +126,21 @@ video.virgil-censored {
   font-variant-numeric: tabular-nums;
 }
 
+/* When many watchers crowd the page, the sigil pulses to draw the eye. */
+#virgil-watch.virgil-sigil-alarm {
+  animation: virgil-sigil-pulse 1.8s ease-in-out infinite;
+}
+@keyframes virgil-sigil-pulse {
+  0%, 100% { box-shadow: 0 0 6px var(--vg-accent, #86e0f9); }
+  50% { box-shadow: 0 0 13px 2px var(--vg-accent, #86e0f9); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #virgil-veil {
     transition: none;
+  }
+  #virgil-watch.virgil-sigil-alarm {
+    animation: none;
   }
 }
 
@@ -168,6 +180,103 @@ video.virgil-censored {
 
 @media (prefers-reduced-motion: reduce) {
   #virgil-sprite { animation: none; }
+}
+
+/* The lantern's light — a glow anchored on the figure's flame/beacon/orb.
+   Idle: a whisper-quiet flicker. On a warning it blooms into a pool that pushes
+   the gloom back around Virgil. Lives inside #virgil-root, above the veil. */
+#virgil-light {
+  position: absolute;
+  left: 70%;
+  top: 32%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, var(--virgil-glow) 0%, transparent 68%);
+  opacity: 0.55;
+  filter: blur(2px);
+  animation: virgil-flicker 3s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes virgil-flicker {
+  0%   { opacity: 0.5;  transform: scale(1); }
+  18%  { opacity: 0.7;  transform: scale(1.07); }
+  34%  { opacity: 0.48; transform: scale(0.97); }
+  52%  { opacity: 0.66; transform: scale(1.04); }
+  68%  { opacity: 0.55; transform: scale(1); }
+  84%  { opacity: 0.72; transform: scale(1.06); }
+  100% { opacity: 0.5;  transform: scale(1); }
+}
+
+/* Warning + speaking: the flame swells into a light pool spilling onto the page. */
+#virgil-root.virgil-warn.virgil-speaking #virgil-light {
+  width: 172px;
+  height: 172px;
+  margin: -86px 0 0 -86px;
+  opacity: 0.42;
+  filter: blur(6px);
+  animation-duration: 1.7s;
+  transition: width 0.5s ease, height 0.5s ease, margin 0.5s ease,
+    opacity 0.5s ease, filter 0.5s ease;
+}
+
+/* The "raise the lantern" flare — a one-shot bloom as the warning lands. */
+#virgil-light.virgil-bloom {
+  animation: virgil-bloom 0.7s ease-out, virgil-flicker 1.7s ease-in-out 0.7s infinite;
+}
+@keyframes virgil-bloom {
+  0%   { opacity: 0.5; }
+  28%  { opacity: 1; }
+  100% { opacity: 0.45; }
+}
+
+/* Embers drifting up from the lantern — only while warning, theme-tinted. */
+#virgil-embers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.virgil-ember {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--virgil-glow);
+  box-shadow: 0 0 4px var(--virgil-glow);
+  opacity: 0;
+  animation: virgil-ember var(--dur, 3.2s) ease-in infinite;
+}
+@keyframes virgil-ember {
+  0%   { opacity: 0; transform: translate(0, 0) scale(1); }
+  16%  { opacity: 0.85; }
+  100% { opacity: 0; transform: translate(var(--dx, 0), var(--dy, -42px)) scale(0.5); }
+}
+
+/* The watchers' web — faint threads from each eye toward Virgil. */
+.virgil-web {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  animation: virgil-web-in 3.2s ease forwards;
+}
+@keyframes virgil-web-in {
+  0% { opacity: 0; }
+  16% { opacity: 1; }
+  78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #virgil-light,
+  #virgil-light.virgil-bloom { animation: none; }
+  #virgil-root.virgil-warn.virgil-speaking #virgil-light { transition: none; }
+  .virgil-ember { animation: none; opacity: 0; }
+  .virgil-web { animation: none; opacity: 0; }
 }
 
 /* Speech bubble — a little carved-stone plaque. */
@@ -235,7 +344,7 @@ video.virgil-censored {
   font-size: 11px;
   padding: 4px 6px;
   color: var(--vg-ink, #d9e5fe);
-  background: var(--vg-cloak, #4961da);
+  background: var(--vg-cloak, #5a4fd0);
   border: 1px solid var(--vg-void, #131520);
   border-radius: 4px;
   cursor: pointer;
@@ -243,7 +352,7 @@ video.virgil-censored {
 
 #virgil-bubble button.virgil-ghost {
   background: transparent;
-  color: var(--vg-inkdim, #627af4);
+  color: var(--vg-inkdim, #7488f6);
   border-color: var(--vg-stone, #2c3354);
 }
 
