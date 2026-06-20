@@ -28,6 +28,14 @@
       watcherFx: true, // the spooky eyes-in-the-dark indicator when watched
       harden: false, // flip browser privacy settings (needs optional permission)
     },
+    // The Snares — name the page's dark patterns (deceptive UX).
+    snares: {
+      enabled: true, // master switch
+      mark: true, // pin a marker on the page (vs. tally quietly in the popup)
+      tiers: { structural: true, lexical: false }, // Tier 1 on; lexical (FP-prone) later
+      useOracle: false, // Tier 3 classification (reuses ai.* config)
+      dismissed: {}, // { host: [snareId, …] } — local "not a snare" allowlist
+    },
     // Tier 3 — optional, off until the wayfarer provides a key.
     ai: {
       enabled: false,
@@ -48,6 +56,12 @@
       ...s,
       ai: { ...d.ai, ...(s.ai || {}) },
       privacy: { ...d.privacy, ...(s.privacy || {}) },
+      snares: {
+        ...d.snares,
+        ...(s.snares || {}),
+        tiers: { ...d.snares.tiers, ...((s.snares && s.snares.tiers) || {}) },
+        dismissed: { ...((s.snares && s.snares.dismissed) || {}) },
+      },
       blur: {
         ...d.blur,
         ...(s.blur || {}),
@@ -80,4 +94,5 @@
   };
 
   V.SETTINGS_KEY = KEY;
+  V.withDefaults = withDefaults; // exposed for unit testing the merge
 })(globalThis);

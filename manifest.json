@@ -46,12 +46,15 @@
         "src/shared/blocklist.js",
         "src/shared/classify.js",
         "src/shared/trackers.js",
+        "src/shared/patterns.js",
         "src/shared/settings.js",
         "src/content/heuristics.js",
         "src/content/sprite.js",
+        "src/content/dp-engine.js",
         "src/content/hero.js",
         "src/content/censor.js",
         "src/content/watchers.js",
+        "src/content/snares.js",
         "src/content/content.js"
       ],
       "css": [
