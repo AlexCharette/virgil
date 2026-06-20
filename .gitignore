@@ -7,3 +7,6 @@ previews/
 # OS cruft
 .DS_Store
 screenshots/
+
+# Impeccable critique archive (local working notes)
+.impeccable/

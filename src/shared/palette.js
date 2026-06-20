@@ -14,38 +14,52 @@
   V.THEMES = {
     drawbridge: {
       name: "Drawbridge",
+      // Midnight keep, cold cyan lantern (the original August-Drawbridge accent
+      // and ground, kept). The figure now wears indigo-violet so it reads
+      // against the cyan flame rather than washing to one blue; peril is the
+      // warm pink break.
       palette: {
-        void: "#131520", crypt: "#1b1f32", stone: "#252a41", shade: "#2c3354",
-        ink: "#b8cdfe", inkDim: "#627af4", cloak: "#4961da", cloakLit: "#627af4",
-        steel: "#7289fd", rune: "#a5b3fe", glow: "#86e0f9", glowDeep: "#67c9e4",
+        void: "#131520", crypt: "#1b1f32", stone: "#252a41", shade: "#2f2a66",
+        ink: "#b8cdfe", inkDim: "#7488f6", cloak: "#5a4fd0", cloakLit: "#7d6ff0",
+        steel: "#7e8cff", rune: "#b2a8ff", glow: "#86e0f9", glowDeep: "#67c9e4",
         peril: "#ec407a",
       },
     },
     ember: {
       name: "Ember",
+      // Torchlit crypt. Near-neutral warm-dark ground (not an orange wash) so
+      // the gold flame pops; the figure wears cool verdigris-teal in deliberate
+      // temperature-contrast to the flame. Severity ramp reads as fire: gold
+      // (safe) → orange (caution) → red (peril).
       palette: {
-        void: "#190f0a", crypt: "#241712", stone: "#3a261a", shade: "#5a2b15",
-        ink: "#f4d8b0", inkDim: "#b07b4f", cloak: "#a8431f", cloakLit: "#d96a2c",
-        steel: "#f0944a", rune: "#f6c074", glow: "#ffb24d", glowDeep: "#d97e2b",
-        peril: "#ff3b6b",
+        void: "#16130f", crypt: "#201b16", stone: "#312a22", shade: "#1f3b3a",
+        ink: "#efe2d0", inkDim: "#ab9a84", cloak: "#357f7e", cloakLit: "#54a5a1",
+        steel: "#ff8c3a", rune: "#ffd98a", glow: "#ffce5b", glowDeep: "#d99a30",
+        peril: "#ff4d52",
       },
     },
     grove: {
       name: "Grove",
+      // Witchlight in a deep wood. Near-neutral cool-dark ground; a brown-robed
+      // traveller (warm figure) carries a phosphorescent jade flame (cool light,
+      // not lime). Caution is a teal, peril a warm coral break.
       palette: {
-        void: "#0e1410", crypt: "#15201a", stone: "#1f3326", shade: "#234a2d",
-        ink: "#d2e9c4", inkDim: "#7ba874", cloak: "#3a7a4a", cloakLit: "#56a566",
-        steel: "#7fce86", rune: "#aee59f", glow: "#9ee84f", glowDeep: "#6fb83a",
-        peril: "#ff7a3c",
+        void: "#0f1311", crypt: "#181e1a", stone: "#283029", shade: "#3a2c1a",
+        ink: "#dcebd6", inkDim: "#92a98f", cloak: "#6a4f33", cloakLit: "#8f6f48",
+        steel: "#3fb8b0", rune: "#cdb488", glow: "#83e6a6", glowDeep: "#4fb87a",
+        peril: "#ff6a3d",
       },
     },
     dusk: {
       name: "Dusk",
+      // Twilight over a dark keep. Near-neutral violet-dark ground; an
+      // indigo-blue figure under an orchid flame, with a cyan caution and a hot
+      // rose peril — four hues kept apart so nothing washes to one purple.
       palette: {
-        void: "#14101e", crypt: "#1d1730", stone: "#2c2342", shade: "#392a64",
-        ink: "#e2d2ff", inkDim: "#9a82c8", cloak: "#6a3fce", cloakLit: "#8a5cf0",
-        steel: "#a87dff", rune: "#c9adff", glow: "#c77dff", glowDeep: "#9a4fe0",
-        peril: "#ff5ca0",
+        void: "#110f19", crypt: "#191628", stone: "#2a2640", shade: "#232a55",
+        ink: "#e6dafc", inkDim: "#998fc0", cloak: "#4a44b0", cloakLit: "#6c66e0",
+        steel: "#56b8d8", rune: "#d9b8ff", glow: "#c294ff", glowDeep: "#8a4fe0",
+        peril: "#ff5a8c",
       },
     },
   };

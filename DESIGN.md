@@ -64,14 +64,17 @@ together. Tokens live in `src/shared/palette.js` (`V.THEMES`).
 | Theme | void (bg) | ink (text) | glow (accent) | peril | mood |
 |---|---|---|---|---|---|
 | **Drawbridge** *(default)* | `#131520` | `#b8cdfe` | `#86e0f9` | `#ec407a` | midnight blue, cold lantern |
-| **Ember** | `#190f0a` | `#f4d8b0` | `#ffb24d` | `#ff3b6b` | torchlit, warm |
-| **Grove** | `#0e1410` | `#d2e9c4` | `#9ee84f` | `#ff7a3c` | mossy green |
-| **Dusk** | `#14101e` | `#e2d2ff` | `#c77dff` | `#ff5ca0` | amethyst |
+| **Ember** | `#16130f` | `#efe2d0` | `#ffce5b` | `#ff4d52` | torchlit crypt — teal figure, gold flame |
+| **Grove** | `#0f1311` | `#dcebd6` | `#83e6a6` | `#ff6a3d` | witchlight — brown figure, jade flame |
+| **Dusk** | `#110f19` | `#e6dafc` | `#c294ff` | `#ff5a8c` | twilight — indigo figure, orchid flame |
 
-**Color strategy: Committed-dark.** A near-black ground carries 70%+ of every
-surface; one luminous accent (the flame) does the work; `peril` is the *only*
-warm break in the cold themes and is reserved for genuine danger. No neutral
-hedging — the dark *is* the brand.
+**Color strategy: Committed-dark.** A near-neutral dark ground (low chroma —
+faint temperature, never a full accent wash) carries 70%+ of every surface; one
+luminous accent (the flame) does the work; `peril` is reserved for genuine
+danger. The figure carries a *secondary* hue in deliberate temperature-contrast
+to the flame (a verdigris guide under a gold lantern; a brown traveller with a
+jade witchlight) so each palette holds two or three hues against a neutral
+ground rather than washing to one. No neutral hedging — the dark *is* the brand.
 
 **Severity ramp** (derived in `palette.js`, never hand-set): `safe → glow`,
 `caution → steel`, `peril → peril`. It drives the hero aura, the page-gloom veil
