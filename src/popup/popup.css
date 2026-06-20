@@ -45,8 +45,9 @@ header {
 .title h1 {
   margin: 0;
   font-size: 18px;
-  letter-spacing: 2px;
+  letter-spacing: 0.12em; /* canonical VIRGIL wordmark tracking */
   text-transform: uppercase;
+  color: var(--ink);
 }
 
 .tagline {

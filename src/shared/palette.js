@@ -24,7 +24,7 @@
     ember: {
       name: "Ember",
       palette: {
-        void: "#190f0a", crypt: "#241712", stone: "#3a261a", shade: "#3a261a",
+        void: "#190f0a", crypt: "#241712", stone: "#3a261a", shade: "#5a2b15",
         ink: "#f4d8b0", inkDim: "#b07b4f", cloak: "#a8431f", cloakLit: "#d96a2c",
         steel: "#f0944a", rune: "#f6c074", glow: "#ffb24d", glowDeep: "#d97e2b",
         peril: "#ff3b6b",
@@ -33,7 +33,7 @@
     grove: {
       name: "Grove",
       palette: {
-        void: "#0e1410", crypt: "#15201a", stone: "#1f3326", shade: "#1f3326",
+        void: "#0e1410", crypt: "#15201a", stone: "#1f3326", shade: "#234a2d",
         ink: "#d2e9c4", inkDim: "#7ba874", cloak: "#3a7a4a", cloakLit: "#56a566",
         steel: "#7fce86", rune: "#aee59f", glow: "#9ee84f", glowDeep: "#6fb83a",
         peril: "#ff7a3c",
@@ -42,7 +42,7 @@
     dusk: {
       name: "Dusk",
       palette: {
-        void: "#14101e", crypt: "#1d1730", stone: "#2c2342", shade: "#2c2342",
+        void: "#14101e", crypt: "#1d1730", stone: "#2c2342", shade: "#392a64",
         ink: "#e2d2ff", inkDim: "#9a82c8", cloak: "#6a3fce", cloakLit: "#8a5cf0",
         steel: "#a87dff", rune: "#c9adff", glow: "#c77dff", glowDeep: "#9a4fe0",
         peril: "#ff5ca0",
