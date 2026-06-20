@@ -62,10 +62,9 @@
     "#truste-consent-track",
   ];
 
-  // The marker glyph — a pixel snare-knot (a noosed loop with a trailing cord),
-  // built as inline SVG so a hostile page CSP can't block it. DOM-only; never
-  // called in the node tests.
-  const SVGNS = "http://www.w3.org/2000/svg";
+  // The marker glyph — a pixel snare-knot (a noosed loop with a trailing cord).
+  // Built via the shared V.pixelSvg (sprite.js) so all glyphs share one builder;
+  // DOM-only and never called in the node tests.
   const KNOT = [
     "..SSSS...",
     ".S....S..",
@@ -77,22 +76,5 @@
     "...S.....",
     "..S......",
   ];
-  V.knotSvg = function (color) {
-    const svg = document.createElementNS(SVGNS, "svg");
-    svg.setAttribute("viewBox", "0 0 9 9");
-    svg.setAttribute("shape-rendering", "crispEdges");
-    svg.setAttribute("class", "virgil-knot");
-    for (let y = 0; y < KNOT.length; y++)
-      for (let x = 0; x < KNOT[y].length; x++) {
-        if (KNOT[y][x] !== "S") continue;
-        const r = document.createElementNS(SVGNS, "rect");
-        r.setAttribute("x", x);
-        r.setAttribute("y", y);
-        r.setAttribute("width", 1);
-        r.setAttribute("height", 1);
-        r.setAttribute("fill", color || "#ffce5b");
-        svg.appendChild(r);
-      }
-    return svg;
-  };
+  V.knotSvg = (color) => V.pixelSvg(KNOT, color || "#ffce5b", "virgil-knot");
 })(globalThis);

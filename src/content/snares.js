@@ -306,9 +306,5 @@
     } catch (e) {}
   };
 
-  try {
-    browser.runtime.onMessage.addListener((msg) => {
-      if (msg && msg.type === "getSnares") return Promise.resolve(S.report());
-    });
-  } catch (e) {}
+  V.onQuery("getSnares", S.report);
 })(globalThis);

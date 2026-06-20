@@ -47,27 +47,25 @@
 
   const KEY = "virgil:settings";
 
-  // Deep-ish merge so new default fields appear for existing installs.
+  const isObj = (v) => v && typeof v === "object" && !Array.isArray(v);
+
+  // Layer stored settings over the defaults: nested objects merge recursively,
+  // arrays and scalars are taken from `stored` when present (copied, never
+  // shared by reference). New default fields appear for existing installs
+  // automatically, and stored-only keys (e.g. per-host snare dismissals) are
+  // kept — so adding a setting needs no change here.
+  function deepMerge(def, src) {
+    if (Array.isArray(def)) return (Array.isArray(src) ? src : def).slice();
+    if (!isObj(def)) return src === undefined ? def : src;
+    const out = {};
+    for (const k of Object.keys(def))
+      out[k] = deepMerge(def[k], isObj(src) ? src[k] : undefined);
+    if (isObj(src)) for (const k of Object.keys(src)) if (!(k in out)) out[k] = src[k];
+    return out;
+  }
+
   function withDefaults(stored) {
-    const d = V.DEFAULT_SETTINGS;
-    const s = stored || {};
-    return {
-      ...d,
-      ...s,
-      ai: { ...d.ai, ...(s.ai || {}) },
-      privacy: { ...d.privacy, ...(s.privacy || {}) },
-      snares: {
-        ...d.snares,
-        ...(s.snares || {}),
-        tiers: { ...d.snares.tiers, ...((s.snares && s.snares.tiers) || {}) },
-        dismissed: { ...((s.snares && s.snares.dismissed) || {}) },
-      },
-      blur: {
-        ...d.blur,
-        ...(s.blur || {}),
-        model: { ...d.blur.model, ...((s.blur && s.blur.model) || {}) },
-      },
-    };
+    return deepMerge(V.DEFAULT_SETTINGS, stored || {});
   }
 
   // `browser` is the WebExtension polyfill namespace (native on Firefox,
@@ -95,4 +93,14 @@
 
   V.SETTINGS_KEY = KEY;
   V.withDefaults = withDefaults; // exposed for unit testing the merge
+
+  // Register a one-shot responder for a popup query message (e.g. "getWatchers").
+  // Shared by the content modules so each doesn't re-wrap browser.runtime.
+  V.onQuery = function (type, fn) {
+    try {
+      browser.runtime.onMessage.addListener((msg) => {
+        if (msg && msg.type === type) return Promise.resolve(fn());
+      });
+    } catch (e) {}
+  };
 })(globalThis);

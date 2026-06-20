@@ -52,6 +52,7 @@
         "src/content/sprite.js",
         "src/content/dp-engine.js",
         "src/content/hero.js",
+        "src/content/hero-badges.js",
         "src/content/censor.js",
         "src/content/watchers.js",
         "src/content/snares.js",

@@ -416,23 +416,36 @@
   };
   V.CHARM_GLYPHS = CHARM_GLYPHS;
 
-  V.charmSvg = function (id, color) {
-    const pat = CHARM_GLYPHS[id] || CHARM_GLYPHS.eye;
+  // Generic pixel-art → inline-SVG builder shared by every small glyph (the
+  // watcher eye, the snare knot, the loadout charms). `fill` is a colour string,
+  // or a { char: colour } map for multi-colour glyphs (e.g. eye sclera + pupil).
+  // "." cells are skipped; the viewBox is sized from the pattern. CSP-safe.
+  V.pixelSvg = function (pattern, fill, className) {
+    const h = pattern.length;
+    const w = pattern[0].length;
     const svg = document.createElementNS(SVGNS, "svg");
-    svg.setAttribute("viewBox", "0 0 9 9");
+    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
     svg.setAttribute("shape-rendering", "crispEdges");
-    svg.setAttribute("class", "virgil-charm-svg");
-    for (let y = 0; y < pat.length; y++)
-      for (let x = 0; x < pat[y].length; x++) {
-        if (pat[y][x] !== "S") continue;
+    if (className) svg.setAttribute("class", className);
+    const map = typeof fill === "string" ? null : fill || {};
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < pattern[y].length; x++) {
+        const ch = pattern[y][x];
+        if (ch === ".") continue;
+        const color = map ? map[ch] : fill;
+        if (!color) continue;
         const r = document.createElementNS(SVGNS, "rect");
         r.setAttribute("x", x);
         r.setAttribute("y", y);
         r.setAttribute("width", 1);
         r.setAttribute("height", 1);
-        r.setAttribute("fill", color || "#86e0f9");
+        r.setAttribute("fill", color);
         svg.appendChild(r);
       }
     return svg;
+  };
+
+  V.charmSvg = function (id, color) {
+    return V.pixelSvg(CHARM_GLYPHS[id] || CHARM_GLYPHS.eye, color || "#86e0f9", "virgil-charm-svg");
   };
 })(globalThis);

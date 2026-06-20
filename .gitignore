@@ -10,3 +10,6 @@ screenshots/
 
 # Impeccable critique archive (local working notes)
 .impeccable/
+
+# Stray packaged build at repo root (use dist/ via npm run build)
+virgil.zip

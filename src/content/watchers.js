@@ -104,10 +104,6 @@
     if (fpOn && e.detail) addFp(e.detail.sig);
   });
 
-  // Answer the popup's live query (only this content-script handles getWatchers).
-  try {
-    browser.runtime.onMessage.addListener((msg) => {
-      if (msg && msg.type === "getWatchers") return Promise.resolve(W.report());
-    });
-  } catch (e) {}
+  // Answer the popup's live query.
+  V.onQuery("getWatchers", W.report);
 })(globalThis);
