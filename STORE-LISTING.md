@@ -57,11 +57,11 @@ websites and suggestive media by warning on and blurring such content.
 > all kept on the user's device.
 
 **`privacy` / `contentSettings` (optional permissions):**
-> Requested only when the user enables "Harden my passage." Used to change the
+> Requested only when the user enables "Cloak my passage." Used to change the
 > user's own browser privacy settings (WebRTC IP-leak handling, hyperlink
 > auditing, third-party cookies; on Chrome, auto-declining notification prompts).
 > Not used to collect or transmit any data. Released when the user turns
-> Hardening off. `contentSettings` is Chrome-only (absent from the Firefox build).
+> Cloaking off. `contentSettings` is Chrome-only (absent from the Firefox build).
 
 Note: the "Reveal the Watchers" feature needs **no** permission — it reads the
 page's own resource-timing list locally to count trackers and blocks nothing.

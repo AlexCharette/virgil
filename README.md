@@ -62,7 +62,7 @@ Virgil also guards against the *other* snare — surveillance:
   also spots **active fingerprinting** (canvas/WebGL/audio probing) via a
   MAIN-world probe that only observes — never reads the values or alters the page
   (Firefox 128+ for that part).
-- **Harden my passage** *(opt-in)* — flips your browser's own privacy settings
+- **Cloak my passage** *(opt-in)* — flips your browser's own privacy settings
   (WebRTC IP-leak handling, hyperlink auditing, third-party cookies; on Chrome,
   auto-declining notification prompts; on Firefox, built-in tracking protection).
   Uses the `privacy`/`contentSettings` permissions, requested **only** when you

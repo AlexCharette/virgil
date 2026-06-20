@@ -68,14 +68,14 @@ fingerprint-shaped call happened; it never reads the resulting values, never
 changes what the page receives, and sends nothing off your device. This runs
 locally and needs no permission.
 
-## "Harden my passage" (optional)
+## "Cloak my passage" (optional)
 
-If you enable Hardening, Virgil changes **your own browser's** privacy settings —
+If you enable Cloaking, Virgil changes **your own browser's** privacy settings —
 e.g. reducing WebRTC IP leakage, disabling hyperlink auditing, blocking
 third-party cookies, and (on Chrome) auto-declining notification prompts. This
 adjusts your browser configuration on your device; it does not collect or send
 any data. The permissions it needs (`privacy`, and on Chrome `contentSettings`)
-are **optional** — Virgil only requests them at the moment you turn Hardening on,
+are **optional** — Virgil only requests them at the moment you turn Cloaking on,
 and releases the settings when you turn it off.
 
 ## Permissions
@@ -84,7 +84,7 @@ and releases the settings when you turn it off.
   page you're viewing to scan it and place the guide.
 - **Storage** — used to save the on-device settings and tallies described above.
 - **Privacy / Content settings (optional)** — requested only when you enable
-  "Harden my passage," to change your browser's own privacy settings. Not used to
+  "Cloak my passage," to change your browser's own privacy settings. Not used to
   collect data.
 
 ## What Virgil does NOT do
