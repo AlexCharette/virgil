@@ -62,6 +62,12 @@ locally** by reading the page's own already-loaded resource list (the standard
 names what the page already loaded. A running tally of distinct trackers seen is
 kept as a local counter for the popup.
 
+It can also spot **active fingerprinting** — when a page probes your device via
+canvas, WebGL, or audio APIs. Virgil observes only the *fact* that a
+fingerprint-shaped call happened; it never reads the resulting values, never
+changes what the page receives, and sends nothing off your device. This runs
+locally and needs no permission.
+
 ## "Harden my passage" (optional)
 
 If you enable Hardening, Virgil changes **your own browser's** privacy settings —

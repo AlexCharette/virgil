@@ -24,6 +24,7 @@
     ["blurOnAdult", "blur.onAdultPages"],
     ["blurHeuristics", "blur.heuristics"],
     ["revealWatchers", "privacy.revealWatchers"],
+    ["detectFingerprinting", "privacy.detectFingerprinting"],
     ["aiEnabled", "ai.enabled"],
   ];
   const TEXTS = [

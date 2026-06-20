@@ -1,6 +1,6 @@
 {
   "name": "virgil",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "A pixel-art companion that guides you past the web's attention traps. Chrome/Edge + Firefox/Zen.",
@@ -9,6 +9,7 @@
     "build": "node tools/build.mjs",
     "watch": "node tools/build.mjs --watch",
     "preview": "node tools/gen-concepts.mjs previews",
-    "release": "node tools/release.mjs"
+    "release": "node tools/release.mjs",
+    "test": "node tools/test-fp.mjs"
   }
 }

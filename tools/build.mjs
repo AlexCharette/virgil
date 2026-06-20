@@ -69,7 +69,7 @@ function buildAll() {
   ff.browser_specific_settings = {
     gecko: {
       id: "virgil@herbary.io",
-      strict_min_version: "115.0",
+      strict_min_version: "128.0", // world:"MAIN" content scripts need Firefox 128+
       // AMO-required data-consent declaration. Virgil collects nothing by
       // default (settings stay local) → required is the "none" marker (the
       // array must be non-empty). The opt-in AI transmits a page summary

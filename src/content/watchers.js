@@ -10,11 +10,26 @@
   const W = (V.watchers = {});
 
   let started = false;
+  let fpOn = false;
   let pageBase = null;
   let po = null;
   const found = new Map(); // company name -> category
   let reported = 0;
   let reportTimer = null;
+
+  // Active fingerprint signals (from the MAIN-world probe) fold into the same
+  // map under the "fingerprint" category, so the popup renders them with no new UI.
+  const FP_NAME = {
+    canvas: "Canvas fingerprinting",
+    webgl: "WebGL device probe",
+    audio: "Audio fingerprinting",
+  };
+  function addFp(sig) {
+    const name = FP_NAME[sig];
+    if (!name || found.has(name)) return;
+    found.set(name, "fingerprint");
+    scheduleReport();
+  }
 
   function consider(url) {
     let host;
@@ -53,9 +68,10 @@
     return { count: found.size, names: [...found.keys()], byCategory };
   };
 
-  W.start = function () {
+  W.start = function (opts) {
     if (started) return;
     started = true;
+    fpOn = !!(opts && opts.fingerprint);
     pageBase = V.baseDomain(location.hostname);
     try {
       for (const e of performance.getEntriesByType("resource")) consider(e.name);
@@ -66,7 +82,19 @@
       });
       po.observe({ type: "resource", buffered: true });
     } catch (e) {}
+    // Fold in any fingerprint signals the probe already fired before we attached.
+    if (fpOn) {
+      try {
+        const pre = document.documentElement.getAttribute("data-virgil-fp");
+        if (pre) pre.split(",").forEach(addFp);
+      } catch (e) {}
+    }
   };
+
+  // Live fingerprint signals from the MAIN-world probe.
+  window.addEventListener("virgil:fp", (e) => {
+    if (fpOn && e.detail) addFp(e.detail.sig);
+  });
 
   // Answer the popup's live query (only this content-script handles getWatchers).
   try {

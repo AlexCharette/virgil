@@ -24,6 +24,7 @@
     // Privacy guardianship.
     privacy: {
       revealWatchers: true, // count trackers/replay/fingerprinters on each page
+      detectFingerprinting: true, // watch for active canvas/WebGL/audio probing
       harden: false, // flip browser privacy settings (needs optional permission)
     },
     // Tier 3 — optional, off until the wayfarer provides a key.

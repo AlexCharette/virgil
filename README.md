@@ -58,7 +58,10 @@ Virgil also guards against the *other* snare — surveillance:
 - **Reveal the Watchers** — counts and names the third-party trackers, ad
   networks, session-replay, and fingerprinting services on each page, read
   **locally** from the page's own resource list (no blocking, no network, no
-  permission). Shown in the popup, with a running "watchers revealed" tally.
+  permission). Shown in the popup, with a running "watchers revealed" tally. It
+  also spots **active fingerprinting** (canvas/WebGL/audio probing) via a
+  MAIN-world probe that only observes — never reads the values or alters the page
+  (Firefox 128+ for that part).
 - **Harden my passage** *(opt-in)* — flips your browser's own privacy settings
   (WebRTC IP-leak handling, hyperlink auditing, third-party cookies; on Chrome,
   auto-declining notification prompts; on Firefox, built-in tracking protection).
