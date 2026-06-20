@@ -27,8 +27,10 @@ two things, locally and on your terms:
    infinite scroll, adult), dims the page into gloom, and lets you turn back or
    stay — per-page, never the whole site.
 2. **Guards your privacy.** Reveals the Watchers (trackers, session-replay,
-   fingerprinting) already on a page, can spot active device-fingerprinting, and
-   optionally cloaks your passage by hardening the browser's own settings.
+   fingerprinting) already on a page and **gouges them out by default** — barring
+   known trackers, third-party only. Spots active device-fingerprinting, and can
+   cloak your passage by hardening the browser's own settings or salt the earth
+   on a site, clearing its cookies and storage.
 
 Success looks like: the user keeps Virgil installed for months because he feels
 like an ally, not a hall monitor — they notice more, lose fewer hours, leak less
@@ -64,11 +66,16 @@ Virgil is **none** of these:
 
 ## Design Principles
 
-1. **Guide, never gaoler.** Least privilege, choice preserved. Warn, reveal,
-   then let the wayfarer decide — friction and a moment of pause, not walls.
-   ("Stay on this page" whitelists one URL; everything risky is opt-in.)
-2. **Reveal before shield.** Name the circle, count the Watchers, draw the
-   gloom — awareness comes first; blocking is the user's call, not the default.
+1. **Guide, never gaoler.** The wayfarer is never walled off from a page —
+   Virgil warns, reveals, and leaves the choice ("Stay on this page" whitelists
+   one URL). The only thing he bars without asking is the *watchers*, never the
+   traveller.
+2. **Reveal before shield — for the circles.** Awareness comes first for the
+   attention perils: name the circle, draw the gloom, then let the user turn
+   back or stay; he never blocks a page. The **watchers are the exception** —
+   revealed *and* gouged out by default (trackers barred, third-party only),
+   because surveillance shouldn't be a choice the user re-makes every page. The
+   heavier shields — cloaking, salting a site — stay opt-in.
 3. **Local by conviction.** Nothing leaves the device. The privacy features
    practice what the brand preaches: no telemetry, no analytics, AI is
    opt-in and bring-your-own-key. The product is the proof of the pitch.
