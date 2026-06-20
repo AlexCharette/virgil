@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # No dependencies to install — the tooling uses only Node built-ins.
+      - name: Test (pure engines + shared logic)
+        run: npm test
+      - name: Build (Chrome + Firefox bundles)
+        run: npm run build

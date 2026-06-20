@@ -17,20 +17,27 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, watch } from "n
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import vm from "node:vm";
 import { writeIcons } from "./icons.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const ASSETS = ["vendor", "src", "icons"];
 
+// The background's shared deps come from the single source the worker also uses,
+// so Chrome (importScripts) and Firefox (background.scripts) can never drift.
+function swDeps() {
+  const box = {};
+  box.globalThis = box;
+  vm.createContext(box);
+  vm.runInContext(readFileSync(join(root, "src/background/sw-deps.js"), "utf8"), box);
+  return box.VIRGIL_SW_DEPS;
+}
+
 // Firefox loads these as ordinary background scripts (no importScripts there);
-// order matters — polyfill, then shared modules, then the worker body.
+// order matters — polyfill, then the shared modules, then the worker body.
 const FF_BACKGROUND_SCRIPTS = [
   "vendor/browser-polyfill.min.js",
-  "src/shared/palette.js",
-  "src/shared/categories.js",
-  "src/shared/blocklist.js",
-  "src/shared/classify.js",
-  "src/shared/settings.js",
+  ...swDeps(),
   "src/background/service-worker.js",
 ];
 

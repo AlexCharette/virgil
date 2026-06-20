@@ -10,6 +10,6 @@
     "watch": "node tools/build.mjs --watch",
     "preview": "node tools/gen-concepts.mjs previews",
     "release": "node tools/release.mjs",
-    "test": "node tools/test-fp.mjs"
+    "test": "node tools/test-fp.mjs && node tools/test-dp.mjs && node tools/test-shared.mjs"
   }
 }

@@ -11,13 +11,10 @@
 // its dependencies here. Firefox loads them via background.scripts in the
 // manifest instead, where importScripts does not exist — hence the guard.
 if (typeof importScripts === "function") {
+  importScripts("/src/background/sw-deps.js"); // sets globalThis.VIRGIL_SW_DEPS
   importScripts(
     "/vendor/browser-polyfill.min.js",
-    "/src/shared/palette.js",
-    "/src/shared/categories.js",
-    "/src/shared/blocklist.js",
-    "/src/shared/classify.js",
-    "/src/shared/settings.js"
+    ...globalThis.VIRGIL_SW_DEPS.map((p) => "/" + p)
   );
 }
 
@@ -33,14 +30,39 @@ function zeroed() {
 }
 
 function blankStats() {
-  return { since: Date.now(), warnings: zeroed(), seconds: zeroed(), watchers: 0 };
+  return {
+    since: Date.now(),
+    warnings: zeroed(),
+    seconds: zeroed(),
+    watchers: 0,
+    snares: 0,
+  };
 }
 
-async function addWatchers(n) {
-  const s = await getStats();
-  s.watchers = (s.watchers || 0) + n;
-  await browser.storage.local.set({ [STATS_KEY]: s });
+// All stat writes go through one chained mutator so concurrent messages
+// (e.g. watchersSeen + snaresSeen arriving close together) read-modify-write in
+// series instead of clobbering each other's snapshot.
+let statsChain = Promise.resolve();
+function mutateStats(fn) {
+  statsChain = statsChain.then(async () => {
+    const s = await getStats();
+    fn(s);
+    await browser.storage.local.set({ [STATS_KEY]: s });
+    return s;
+  });
+  return statsChain;
 }
+function resetStats() {
+  statsChain = statsChain.then(async () => {
+    const b = blankStats();
+    await browser.storage.local.set({ [STATS_KEY]: b });
+    return b;
+  });
+  return statsChain;
+}
+
+const addWatchers = (n) => mutateStats((s) => { s.watchers = (s.watchers || 0) + n; });
+const addSnares = (n) => mutateStats((s) => { s.snares = (s.snares || 0) + n; });
 
 // --- privacy hardening (Feature 2) ----------------------------------------
 // Flips protective browser settings via the optional `privacy` API and, on
@@ -91,17 +113,11 @@ async function getStats() {
   return (res && res[STATS_KEY]) || blankStats();
 }
 
-async function bumpWarning(category) {
-  const s = await getStats();
-  if (s.warnings[category] != null) s.warnings[category] += 1;
-  await browser.storage.local.set({ [STATS_KEY]: s });
-}
+const bumpWarning = (category) =>
+  mutateStats((s) => { if (s.warnings[category] != null) s.warnings[category] += 1; });
 
-async function addSeconds(category, seconds) {
-  const s = await getStats();
-  if (s.seconds[category] != null) s.seconds[category] += seconds;
-  await browser.storage.local.set({ [STATS_KEY]: s });
-}
+const addSeconds = (category, seconds) =>
+  mutateStats((s) => { if (s.seconds[category] != null) s.seconds[category] += seconds; });
 
 // --- badge ----------------------------------------------------------------
 
@@ -254,13 +270,14 @@ browser.runtime.onMessage.addListener((msg, sender) => {
     case "watchersSeen":
       return addWatchers(msg.count || 0);
 
+    case "snaresSeen":
+      return addSnares(msg.count || 0);
+
     case "getStats":
       return getStats();
 
     case "resetStats":
-      return browser.storage.local
-        .set({ [STATS_KEY]: blankStats() })
-        .then(() => blankStats());
+      return resetStats();
 
     case "classifyAI":
       return classifyAI(msg.features).then((r) => {
