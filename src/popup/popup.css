@@ -3,9 +3,9 @@
   --crypt: #1b1f32;
   --stone: #252a41;
   --ink: #b8cdfe;
-  --ink-dim: #627af4;
-  --cloak: #4961da;
-  --steel: #7289fd;
+  --ink-dim: #7488f6;
+  --cloak: #5a4fd0;
+  --steel: #7e8cff;
   --glow: #86e0f9;
   --peril: #ec407a;
 }
@@ -38,6 +38,8 @@ header {
 #portrait {
   width: 48px;
   height: 48px;
+  background: var(--void);
+  border-radius: 4px;
   image-rendering: pixelated;
   filter: drop-shadow(0 0 5px var(--glow));
 }
@@ -56,8 +58,188 @@ header {
   color: var(--ink-dim);
 }
 
+/* ---- Headings ---- */
+h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-dim);
+  margin: 0 0 6px;
+}
+
+.picker h3 {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--ink-dim);
+  margin: 0 0 6px;
+}
+
+/* ---- Master controls card ---- */
+.controls.primary {
+  background: var(--crypt);
+  border: 1px solid var(--stone);
+  border-radius: 6px;
+  padding: 8px 10px 4px;
+  margin-bottom: 10px;
+}
+
+/* ---- Rows & toggles ---- */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--stone);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row-label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gloss {
+  font-size: 9.5px;
+  color: var(--ink-dim);
+  line-height: 1.3;
+  letter-spacing: 0.2px;
+}
+
+.inline input[type="number"] {
+  width: 48px;
+}
+
+input[type="checkbox"] {
+  flex: 0 0 auto;
+  appearance: none;
+  width: 36px;
+  height: 18px;
+  background: var(--stone);
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ink-dim);
+  transition: transform 0.15s, background 0.15s;
+}
+
+input[type="checkbox"]:checked {
+  background: var(--cloak);
+}
+
+input[type="checkbox"]:checked::after {
+  transform: translateX(18px);
+  background: var(--glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  input[type="checkbox"],
+  input[type="checkbox"]::after {
+    transition: none;
+  }
+}
+
+/* ---- Collapsible panels ---- */
+.panel {
+  border: 1px solid var(--stone);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.panel > summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.panel > summary::-webkit-details-marker {
+  display: none;
+}
+
+.panel[open] > summary {
+  margin-bottom: 8px;
+}
+
+.panel-title {
+  color: var(--glow);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.panel-meta {
+  flex: 0 0 auto;
+  color: var(--ink-dim);
+  font-size: 10px;
+  text-align: right;
+}
+
+/* ---- Ledger ---- */
+.ledger {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ledger li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  padding: 5px 8px;
+  background: var(--crypt);
+  border: 1px solid var(--stone);
+  border-radius: 4px;
+}
+
+.sev-badge {
+  flex: 0 0 14px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.led-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.ledger li .count {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Pickers ---- */
 .picker {
   margin-bottom: 12px;
+}
+
+.picker:last-child {
+  margin-bottom: 0;
 }
 
 .style-grid {
@@ -150,85 +332,7 @@ header {
   color: var(--glow);
 }
 
-.stats {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.stat {
-  flex: 1;
-  background: var(--crypt);
-  border: 1px solid var(--stone);
-  border-radius: 6px;
-  padding: 10px;
-  text-align: center;
-}
-
-.stat-num {
-  display: block;
-  font-size: 20px;
-  color: var(--glow);
-  font-variant-numeric: tabular-nums;
-}
-
-.stat-label {
-  display: block;
-  font-size: 10px;
-  color: var(--ink-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin-top: 3px;
-}
-
-.ledger {
-  list-style: none;
-  margin: 0 0 14px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.ledger li {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  padding: 3px 8px;
-  border-left: 3px solid var(--steel);
-  background: rgba(37, 42, 65, 0.4);
-}
-
-.ledger li .count {
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-
-.controls,
-.paused {
-  margin-bottom: 12px;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--stone);
-}
-
-.inline input[type="number"] {
-  width: 48px;
-}
-
-h2 {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--ink-dim);
-  margin: 0 0 6px;
-}
-
+/* ---- Allowed sites list ---- */
 #pausedList {
   list-style: none;
   margin: 0;
@@ -274,13 +378,14 @@ h2 {
   margin: 4px 0;
 }
 
+.note-warn {
+  color: var(--peril);
+}
+
+/* ---- The Watchers readout ---- */
 .watchers {
-  background: var(--crypt);
-  border: 1px solid var(--stone);
-  border-radius: 6px;
-  padding: 8px 10px;
   font-size: 11px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .watchers .watchers-count {
@@ -310,21 +415,7 @@ h2 {
   color: var(--ink);
 }
 
-details.ai {
-  border: 1px solid var(--stone);
-  border-radius: 6px;
-  padding: 8px 10px;
-  margin-bottom: 12px;
-}
-
-summary {
-  cursor: pointer;
-  color: var(--glow);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
+/* ---- Oracle fields ---- */
 .field {
   display: flex;
   flex-direction: column;
@@ -358,38 +449,18 @@ input[type="number"]:focus {
   border-color: var(--glow);
 }
 
-input[type="checkbox"] {
-  appearance: none;
-  width: 36px;
-  height: 18px;
-  background: var(--stone);
-  border-radius: 10px;
-  position: relative;
-  cursor: pointer;
-  transition: background 0.15s;
+/* ---- Focus visibility (keyboard) ---- */
+input[type="checkbox"]:focus-visible,
+.theme-opt:focus-visible,
+.style-opt:focus-visible,
+.panel > summary:focus-visible,
+#pausedList button:focus-visible,
+button.ghost:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 2px;
 }
 
-input[type="checkbox"]::after {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--ink-dim);
-  transition: transform 0.15s, background 0.15s;
-}
-
-input[type="checkbox"]:checked {
-  background: var(--cloak);
-}
-
-input[type="checkbox"]:checked::after {
-  transform: translateX(18px);
-  background: var(--glow);
-}
-
+/* ---- Footer ---- */
 footer {
   display: flex;
   align-items: center;
@@ -413,6 +484,11 @@ button.ghost:hover {
   color: var(--peril);
 }
 
+button.ghost.armed {
+  border-color: var(--peril);
+  color: var(--peril);
+}
+
 .saved {
   font-size: 11px;
   color: var(--glow);
@@ -422,4 +498,10 @@ button.ghost:hover {
 
 .saved.show {
   opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .saved {
+    transition: none;
+  }
 }

@@ -53,25 +53,32 @@
   function renderStats(stats) {
     const cats = V.PERIL_CATEGORIES;
     const sum = (bucket) => cats.reduce((t, id) => t + (stats[bucket][id] || 0), 0);
-    $("stat-warnings").textContent = sum("warnings");
-    $("stat-time").textContent = fmtDuration(sum("seconds"));
+    const warned = sum("warnings");
+    $("ledgerSummary").textContent =
+      `${fmtDuration(sum("seconds"))} in the depths · ${warned} warned`;
     $("watchers-total").textContent = stats.watchers || 0;
 
     const ledger = $("ledger");
     ledger.replaceChildren();
     for (const id of cats) {
       const cat = V.CATEGORIES[id];
-      const li = document.createElement("li");
       const sev = cat.severity;
-      li.style.borderLeftColor = V.severityColor[sev];
+      const li = document.createElement("li");
+      // Severity by glyph + colour, never colour alone (the badge carries the
+      // distinction for colour-blind readers): "!" caution, "‼" peril.
+      const badge = document.createElement("span");
+      badge.className = "sev-badge";
+      badge.style.color = V.severityColor[sev];
+      badge.textContent = V.severity[sev].badge || "·";
       const left = document.createElement("span");
+      left.className = "led-label";
       left.textContent = cat.label;
       const right = document.createElement("span");
       right.className = "count";
       right.textContent = `${stats.warnings[id]} · ${fmtDuration(
         stats.seconds[id]
       )}`;
-      li.append(left, right);
+      li.append(badge, left, right);
       ledger.appendChild(li);
     }
   }
@@ -162,7 +169,9 @@
     list.replaceChildren();
     const hosts = settings.pausedHosts || [];
     const urls = settings.allowedUrls || [];
-    empty.style.display = hosts.length || urls.length ? "none" : "block";
+    const total = hosts.length + urls.length;
+    empty.style.display = total ? "none" : "block";
+    $("allowedCount").textContent = total ? String(total) : "";
 
     const row = (label, fullTitle, onRemove) => {
       const li = document.createElement("li");
@@ -207,14 +216,19 @@
 
   function renderWatchers(rep) {
     const el = $("watchersBody");
+    const summary = $("watchersSummary");
     if (!rep) {
+      summary.textContent = "not scanned";
       el.textContent = "Not scanned on this page.";
       return;
     }
     if (!rep.count) {
+      summary.textContent = "clear";
       el.textContent = "No watchers here — the road is unobserved.";
       return;
     }
+    summary.textContent =
+      rep.count === 1 ? "1 watching" : rep.count + " watching";
     el.replaceChildren();
     const head = document.createElement("div");
     head.className = "watchers-count";
@@ -281,11 +295,14 @@
         }
         if (!granted) {
           e.target.checked = false;
+          $("hardenNote").hidden = false;
           return;
         }
+        $("hardenNote").hidden = true;
         settings.privacy.harden = true;
         save();
       } else {
+        $("hardenNote").hidden = true;
         settings.privacy.harden = false;
         save();
         try {
@@ -293,7 +310,24 @@
         } catch (err) {}
       }
     });
-    $("reset").addEventListener("click", () => {
+    // Reset wipes all-time stats — guard it with an inline two-step confirm.
+    let resetTimer = null;
+    const disarmReset = (btn) => {
+      clearTimeout(resetTimer);
+      btn.dataset.armed = "0";
+      btn.classList.remove("armed");
+      btn.textContent = "Reset the ledger";
+    };
+    $("reset").addEventListener("click", (e) => {
+      const btn = e.currentTarget;
+      if (btn.dataset.armed !== "1") {
+        btn.dataset.armed = "1";
+        btn.classList.add("armed");
+        btn.textContent = "Confirm — wipe it?";
+        resetTimer = setTimeout(() => disarmReset(btn), 3500);
+        return;
+      }
+      disarmReset(btn);
       browser.runtime
         .sendMessage({ type: "resetStats" })
         .then((stats) => stats && renderStats(stats));

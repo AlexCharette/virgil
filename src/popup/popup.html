@@ -12,106 +12,141 @@
         <img id="portrait" alt="Virgil" />
         <div class="title">
           <h1>Virgil</h1>
-          <p class="tagline">Your guide through the dark forest</p>
+          <p class="tagline">Your guide through the web.</p>
         </div>
       </header>
 
-      <section class="stats">
-        <div class="stat">
-          <span id="stat-time" class="stat-num">—</span>
-          <span class="stat-label">time in the depths</span>
-        </div>
-        <div class="stat">
-          <span id="stat-warnings" class="stat-num">—</span>
-          <span class="stat-label">warnings given</span>
-        </div>
-      </section>
-
-      <section class="paused">
-        <h2>Sites &amp; pages you've allowed</h2>
-        <ul id="pausedList"></ul>
-        <p id="pausedEmpty" class="muted">None — he watches everywhere.</p>
-      </section>
-
-      <ul class="ledger" id="ledger"></ul>
-
-      <section class="controls">
+      <!-- Master controls — always visible. -->
+      <section class="controls primary" aria-label="On watch">
+        <h2>On watch</h2>
         <label class="row switch">
-          <span>Virgil stands watch</span>
+          <span class="row-label">Virgil stands watch</span>
           <input type="checkbox" id="enabled" />
         </label>
         <label class="row switch">
-          <span>Greet me on safe roads</span>
+          <span class="row-label">
+            Greet me on safe roads
+            <small class="gloss">A word from Virgil even when the way is clear.</small>
+          </span>
           <input type="checkbox" id="greetOnSafe" />
         </label>
         <label class="row">
-          <span>Warn after</span>
+          <span class="row-label">Warn after</span>
           <span class="inline">
             <input type="number" id="lingerMinutes" min="0" max="120" /> min
           </span>
         </label>
       </section>
 
-      <section class="controls">
-        <h2>The Shroud</h2>
-        <label class="row switch">
-          <span>Shroud suggestive media</span>
-          <input type="checkbox" id="blurEnabled" />
-        </label>
-        <label class="row switch">
-          <span>Shroud everything on adult sites</span>
-          <input type="checkbox" id="blurOnAdult" />
-        </label>
-        <label class="row switch">
-          <span>Shroud lewd media anywhere</span>
-          <input type="checkbox" id="blurHeuristics" />
-        </label>
-      </section>
-
-      <section class="controls">
-        <h2>The Watchers</h2>
-        <div id="watchersBody" class="watchers muted">Scanning…</div>
+      <!-- The Watchers — live count in the summary, settings within. -->
+      <details class="panel" id="watchersPanel">
+        <summary>
+          <span class="panel-title">The Watchers</span>
+          <span id="watchersSummary" class="panel-meta">Scanning…</span>
+        </summary>
+        <div id="watchersBody" class="watchers"></div>
         <p class="muted">Revealed all-time: <span id="watchers-total">—</span></p>
         <label class="row switch">
-          <span>Reveal watchers on each page</span>
+          <span class="row-label">
+            Reveal watchers on each page
+            <small class="gloss">Tally trackers the moment a page loads.</small>
+          </span>
           <input type="checkbox" id="revealWatchers" />
         </label>
         <label class="row switch">
-          <span>Spot device fingerprinting</span>
+          <span class="row-label">
+            Spot device fingerprinting
+            <small class="gloss">Catch scripts quietly measuring your device.</small>
+          </span>
           <input type="checkbox" id="detectFingerprinting" />
         </label>
         <label class="row switch">
-          <span>Spooky watcher alerts</span>
+          <span class="row-label">
+            Spooky watcher alerts
+            <small class="gloss">Eyes blink open at the page's edge when you're watched.</small>
+          </span>
           <input type="checkbox" id="watcherFx" />
         </label>
         <label class="row switch">
-          <span>Cloak my passage</span>
+          <span class="row-label">Cloak my passage</span>
           <input type="checkbox" id="harden" />
         </label>
         <p class="muted">
           Blocks WebRTC IP leaks, hyperlink auditing &amp; third-party cookies
           (and notification prompts on Chrome). Asks permission when enabled.
         </p>
-      </section>
+        <p id="hardenNote" class="muted note-warn" hidden>
+          Permission declined — your passage stays uncloaked.
+        </p>
+      </details>
 
-      <section class="picker">
-        <h2>Colour scheme</h2>
-        <div id="themeGrid" class="theme-grid"></div>
-      </section>
+      <!-- The Shroud. -->
+      <details class="panel">
+        <summary><span class="panel-title">The Shroud</span></summary>
+        <label class="row switch">
+          <span class="row-label">
+            Shroud suggestive media
+            <small class="gloss">Blur risky images and thumbnails — click to reveal.</small>
+          </span>
+          <input type="checkbox" id="blurEnabled" />
+        </label>
+        <label class="row switch">
+          <span class="row-label">
+            Shroud everything on adult sites
+            <small class="gloss">On flagged sites, veil every image by default.</small>
+          </span>
+          <input type="checkbox" id="blurOnAdult" />
+        </label>
+        <label class="row switch">
+          <span class="row-label">
+            Shroud lewd media anywhere
+            <small class="gloss">Veil explicit media Virgil spots on any page.</small>
+          </span>
+          <input type="checkbox" id="blurHeuristics" />
+        </label>
+      </details>
 
-      <section class="picker">
-        <h2>Choose your guide</h2>
-        <div id="styleGrid" class="style-grid"></div>
-      </section>
+      <!-- The ledger — totals in the summary, breakdown within. -->
+      <details class="panel" id="ledgerPanel">
+        <summary>
+          <span class="panel-title">The ledger</span>
+          <span id="ledgerSummary" class="panel-meta">—</span>
+        </summary>
+        <ul class="ledger" id="ledger"></ul>
+      </details>
 
-      <details class="ai">
-        <summary>Oracle (optional AI)</summary>
+      <!-- Appearance. -->
+      <details class="panel">
+        <summary><span class="panel-title">Appearance</span></summary>
+        <div class="picker">
+          <h3>Colour scheme</h3>
+          <div id="themeGrid" class="theme-grid"></div>
+        </div>
+        <div class="picker">
+          <h3>Choose your guide</h3>
+          <div id="styleGrid" class="style-grid"></div>
+        </div>
+      </details>
+
+      <!-- Allowed sites & pages. -->
+      <details class="panel" id="allowedPanel">
+        <summary>
+          <span class="panel-title">Allowed sites &amp; pages</span>
+          <span id="allowedCount" class="panel-meta"></span>
+        </summary>
+        <ul id="pausedList"></ul>
+        <p id="pausedEmpty" class="muted">None — he watches everywhere.</p>
+      </details>
+
+      <!-- Oracle (optional AI). -->
+      <details class="panel ai">
+        <summary><span class="panel-title">Oracle (optional AI)</span></summary>
         <p class="muted">
           For pages Virgil can't name on his own, consult an
           OpenRouter-compatible model. Your key stays on this device.
         </p>
         <label class="row switch">
-          <span>Consult the Oracle</span>
+          <span class="row-label">Consult the Oracle</span>
           <input type="checkbox" id="aiEnabled" />
         </label>
         <label class="field">
@@ -133,7 +168,7 @@
       </details>
 
       <footer>
-        <button id="reset" class="ghost">Reset the ledger</button>
+        <button id="reset" class="ghost" data-armed="0">Reset the ledger</button>
         <span id="saved" class="saved">saved</span>
       </footer>
     </div>
