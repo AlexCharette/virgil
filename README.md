@@ -1,4 +1,4 @@
-# Virgil — a guide through the inferno
+# Virgil — a guide through the web
 
 > *"I am Virgil. I'll guide you through what waits below."*
 
@@ -31,7 +31,7 @@ into gloom behind him, and he speaks. You can ask him to lead you out, or
 host, so allowing one YouTube video doesn't unguard all of YouTube. Manage
 allowed pages and whole-site pauses from the popup.
 
-## The Censor — blurring suggestive media
+## The Shroud — blurring suggestive media
 
 Virgil also blurs suggestive images/video and reveals them on click. Deciding
 *what* to blur is tiered, cheapest-first (toggles in the popup):

@@ -8,11 +8,15 @@
   const P = V.palette;
   const H = (V.hero = {});
 
-  let root, sprite, bubble, bubbleName, bubbleText, bubbleActions, veil;
+  let root, sprite, bubble, bubbleName, bubbleText, bubbleActions, veil, eyes, sigil;
   let speakTimer = null;
+  let eyesTimer = null;
   let currentGlow = P.glow;
   let currentStyle = V.DEFAULT_STYLE;
   let currentSeverity = "safe";
+  let fxEnabled = false; // the spooky watcher indicator
+  let watcherCount = 0;
+  let eyesPlayed = false;
 
   function render() {
     if (sprite) sprite.replaceChildren(V.renderSpriteNode(currentGlow, currentStyle));
@@ -26,7 +30,7 @@
   const isWarning = () => currentSeverity === "peril" || currentSeverity === "caution";
 
   // Push the active palette to CSS custom properties on the document root so the
-  // bubble, buttons, veil, and censor outline retheme (hero.css reads --vg-*).
+  // bubble, buttons, veil, and shroud outline retheme (hero.css reads --vg-*).
   function setThemeVars() {
     const P = V.palette;
     const d = document.documentElement.style;
@@ -38,6 +42,80 @@
     d.setProperty("--vg-inkdim", P.inkDim);
     d.setProperty("--vg-cloak", P.cloak);
     d.setProperty("--vg-accent", P.glow);
+  }
+
+  // --- the Watchers indicator: pixel eyes peering from the dark ------------
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const EYE = [".SSSSS.", "SSSPSSS", "SSPPPSS", "SSSPSSS", ".SSSSS."];
+  function makeEye() {
+    const svg = document.createElementNS(SVGNS, "svg");
+    svg.setAttribute("viewBox", "0 0 7 5");
+    svg.setAttribute("class", "virgil-eye-svg");
+    for (let y = 0; y < EYE.length; y++)
+      for (let x = 0; x < EYE[y].length; x++) {
+        const ch = EYE[y][x];
+        if (ch === ".") continue;
+        const r = document.createElementNS(SVGNS, "rect");
+        r.setAttribute("x", x);
+        r.setAttribute("y", y);
+        r.setAttribute("width", 1);
+        r.setAttribute("height", 1);
+        r.setAttribute("fill", ch === "P" ? V.palette.void : V.palette.glow);
+        svg.appendChild(r);
+      }
+    return svg;
+  }
+
+  function edgePlacement() {
+    const r = () => (8 + Math.random() * 80).toFixed(1) + "%";
+    switch (Math.floor(Math.random() * 4)) {
+      case 0: return { top: "14px", left: r() };
+      case 1: return { bottom: "14px", left: r() };
+      case 2: return { left: "14px", top: r() };
+      default: return { right: "14px", top: r() };
+    }
+  }
+
+  // One-shot: a clutch of eyes blink open at the edges, then fade. Count-scaled.
+  function playEyes(n) {
+    if (!eyes) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return; // respect reduced motion — the sigil still conveys it
+    eyes.replaceChildren();
+    const k = Math.min(Math.max(2, n), 6);
+    for (let i = 0; i < k; i++) {
+      const e = document.createElement("div");
+      e.className = "virgil-eye";
+      Object.assign(e.style, edgePlacement());
+      e.style.animationDelay = (Math.random() * 0.6).toFixed(2) + "s";
+      e.appendChild(makeEye());
+      eyes.appendChild(e);
+    }
+    eyes.classList.add("virgil-eyes-on");
+    clearTimeout(eyesTimer);
+    eyesTimer = setTimeout(() => {
+      if (eyes) {
+        eyes.classList.remove("virgil-eyes-on");
+        eyes.replaceChildren();
+      }
+    }, 3400);
+  }
+
+  function updateSigil() {
+    if (!sigil) return;
+    if (fxEnabled && watcherCount > 0) {
+      sigil.replaceChildren(makeEye());
+      const num = document.createElement("span");
+      num.className = "virgil-sigil-num";
+      num.textContent = watcherCount;
+      sigil.appendChild(num);
+      sigil.title =
+        watcherCount + (watcherCount === 1 ? " watcher is" : " watchers are") +
+        " here — open Virgil to see them.";
+      sigil.hidden = false;
+    } else {
+      sigil.hidden = true;
+    }
   }
 
   H.mount = function () {
@@ -70,8 +148,17 @@
     veil = document.createElement("div");
     veil.id = "virgil-veil";
 
+    eyes = document.createElement("div");
+    eyes.id = "virgil-eyes";
+
+    sigil = document.createElement("div");
+    sigil.id = "virgil-watch";
+    sigil.hidden = true;
+    root.appendChild(sigil);
+
     const host = document.body || document.documentElement;
     host.appendChild(veil);
+    host.appendChild(eyes);
     host.appendChild(root);
 
     setThemeVars();
@@ -116,6 +203,22 @@
     if (!styleId || styleId === currentStyle) return;
     currentStyle = styleId;
     render();
+  };
+
+  H.setWatcherFx = function (on) {
+    fxEnabled = !!on;
+    updateSigil();
+  };
+
+  // Called by the watcher detector with the running count. First time a watched
+  // page is found, the eyes blink open once; the sigil tracks the live count.
+  H.setWatchers = function (n) {
+    watcherCount = n || 0;
+    updateSigil();
+    if (fxEnabled && watcherCount > 0 && !eyesPlayed) {
+      eyesPlayed = true;
+      playEyes(watcherCount);
+    }
   };
 
   // Swap the colour scheme: re-tune the palette, the CSS vars, and the sprite,

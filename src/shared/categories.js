@@ -1,6 +1,6 @@
 /*
  * Virgil — the perils he guards against, and the words he speaks.
- * The internet is an inferno of circles; Virgil names them as you cross.
+ * The internet is an spiraling web; Virgil names the levels as you cross.
  */
 (function (g) {
   const V = (g.Virgil = g.Virgil || {});

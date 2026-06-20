@@ -24,11 +24,18 @@
     webgl: "WebGL device probe",
     audio: "Audio fingerprinting",
   };
+  function notifyHero() {
+    try {
+      if (V.hero && V.hero.setWatchers) V.hero.setWatchers(found.size);
+    } catch (e) {}
+  }
+
   function addFp(sig) {
     const name = FP_NAME[sig];
     if (!name || found.has(name)) return;
     found.set(name, "fingerprint");
     scheduleReport();
+    notifyHero();
   }
 
   function consider(url) {
@@ -44,6 +51,7 @@
     if (t && !found.has(t.name)) {
       found.set(t.name, t.category);
       scheduleReport();
+      notifyHero();
     }
   }
 

@@ -14,7 +14,7 @@ Add-ons, and Firefox AMO. Build the packages first with `npm run build`:
 
 ## Listing copy
 
-**Name:** Virgil — Guide Through the Inferno
+**Name:** Virgil — Guide Through the Web
 
 **Short description (≤132 chars, used in manifest & Chrome):**
 > A pixel-art guide that warns you past social media, infinite scroll & adult content — and blurs suggestive media.

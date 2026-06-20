@@ -13,7 +13,7 @@
     lingerMinutes: 10, // nag after this long in a flagged circle
     pausedHosts: [], // whole hostnames where Virgil stays silent
     allowedUrls: [], // specific page URLs the wayfarer chose to stay on
-    // The Censor — blur suggestive media, reveal on click.
+    // The Shroud — blur suggestive media, reveal on click.
     blur: {
       enabled: true, // master switch for blurring
       onAdultPages: true, // Tier A: veil all media on adult-flagged pages
@@ -25,6 +25,7 @@
     privacy: {
       revealWatchers: true, // count trackers/replay/fingerprinters on each page
       detectFingerprinting: true, // watch for active canvas/WebGL/audio probing
+      watcherFx: true, // the spooky eyes-in-the-dark indicator when watched
       harden: false, // flip browser privacy settings (needs optional permission)
     },
     // Tier 3 — optional, off until the wayfarer provides a key.

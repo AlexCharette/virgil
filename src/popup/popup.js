@@ -25,6 +25,7 @@
     ["blurHeuristics", "blur.heuristics"],
     ["revealWatchers", "privacy.revealWatchers"],
     ["detectFingerprinting", "privacy.detectFingerprinting"],
+    ["watcherFx", "privacy.watcherFx"],
     ["aiEnabled", "ai.enabled"],
   ];
   const TEXTS = [

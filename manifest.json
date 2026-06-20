@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Virgil — Guide Through the Inferno",
+  "name": "Virgil — Guide Through the Web",
   "version": "0.3.0",
-  "author": "Herbary",
+  "author": "Alexander Charette",
   "homepage_url": "https://github.com/AlexCharette/virgil",
   "description": "A pixel-art guide that warns you past social media, infinite scroll & adult content — and blurs suggestive media.",
   "permissions": [

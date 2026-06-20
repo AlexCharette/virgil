@@ -240,6 +240,7 @@
     V.applyTheme(settings.theme);
     V.hero.mount();
     V.hero.setStyle(settings.style);
+    V.hero.setWatcherFx(settings.privacy && settings.privacy.watcherFx);
     if (!isExempt() && settings.blur && settings.blur.enabled && V.censor)
       V.censor.start(settings.blur);
     if (!isExempt() && settings.privacy && settings.privacy.revealWatchers && V.watchers)
