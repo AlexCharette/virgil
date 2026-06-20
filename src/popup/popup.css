@@ -396,7 +396,33 @@ input[type="checkbox"]:focus-visible {
 }
 .watcher-names {
   flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.chip {
+  font: inherit;
+  font-size: 10px;
   color: var(--ink);
+  background: var(--stone);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 1px 5px;
+  cursor: pointer;
+}
+.chip:hover,
+.chip:focus-visible {
+  border-color: var(--glow);
+  color: var(--glow);
+  outline: none;
+}
+.dossier {
+  margin: 6px 0 0;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--ink-dim);
+  border-top: 1px solid var(--stone);
+  padding-top: 5px;
 }
 
 /* ---- pickers (guide + realm) ---- */

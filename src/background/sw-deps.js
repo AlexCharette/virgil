@@ -11,6 +11,7 @@
     "src/shared/categories.js",
     "src/shared/blocklist.js",
     "src/shared/classify.js",
+    "src/shared/trackers.js",
     "src/shared/settings.js",
   ];
 })(globalThis);

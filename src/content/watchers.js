@@ -106,4 +106,28 @@
 
   // Answer the popup's live query.
   V.onQuery("getWatchers", W.report);
+
+  // Site-data audit: what this origin has stowed (JS-visible only — httpOnly
+  // cookies are counted by the service worker's purge, not here).
+  V.onQuery("getStorage", () => {
+    const count = (s) => {
+      try { return s.length; } catch (e) { return 0; }
+    };
+    let cookies = 0;
+    try {
+      cookies = document.cookie ? document.cookie.split(";").filter((c) => c.trim()).length : 0;
+    } catch (e) {}
+    return { localStorage: count(localStorage), sessionStorage: count(sessionStorage), cookies };
+  });
+
+  // "Salt the earth" (the local half): wipe this origin's web storage. Cookies
+  // and cache are cleared by the service worker (needs the optional permission).
+  V.onQuery("clearStorage", () => {
+    const wipe = (s) => {
+      let n = 0;
+      try { n = s.length; s.clear(); } catch (e) {}
+      return n;
+    };
+    return { localStorage: wipe(localStorage), sessionStorage: wipe(sessionStorage) };
+  });
 })(globalThis);

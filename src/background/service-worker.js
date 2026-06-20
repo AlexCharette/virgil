@@ -108,6 +108,49 @@ function applyHardening(on) {
   } catch (e) {}
 }
 
+// --- tracker blocking (Feature: optional teeth) ---------------------------
+// One dynamic declarativeNetRequest rule bars every known tracker domain,
+// third-party only. The API namespace exists only once the optional
+// `declarativeNetRequest` permission has been granted (requested in the popup).
+const BLOCK_RULE_ID = 1;
+async function applyBlocking(on) {
+  const dnr = typeof browser !== "undefined" ? browser.declarativeNetRequest : undefined;
+  if (!dnr || !dnr.updateDynamicRules) return; // not granted / unsupported
+  try {
+    await dnr.updateDynamicRules(
+      on
+        ? { removeRuleIds: [BLOCK_RULE_ID], addRules: [V.buildBlockRule(BLOCK_RULE_ID)] }
+        : { removeRuleIds: [BLOCK_RULE_ID] }
+    );
+  } catch (e) {}
+}
+
+// "Salt the earth": clear cookies + cache for one site. localStorage/session
+// are cleared by the content script (origin-scoped, no perms). Chrome scopes by
+// `origins`, Firefox by `hostnames` — try the former, fall back to the latter.
+async function purgeSite(origin) {
+  const bd = typeof browser !== "undefined" ? browser.browsingData : undefined;
+  if (!bd || !bd.remove) return { cookies: false };
+  let host = "";
+  try {
+    host = new URL(origin).hostname;
+  } catch (e) {}
+  try {
+    await bd.remove(
+      { origins: [origin] },
+      { cookies: true, localStorage: true, cacheStorage: true, indexedDB: true }
+    );
+    return { cookies: true };
+  } catch (e) {
+    try {
+      await bd.remove({ hostnames: [host] }, { cookies: true, localStorage: true, indexedDB: true });
+      return { cookies: true };
+    } catch (e2) {
+      return { cookies: false };
+    }
+  }
+}
+
 async function getStats() {
   const res = await browser.storage.local.get(STATS_KEY);
   return (res && res[STATS_KEY]) || blankStats();
@@ -273,6 +316,9 @@ browser.runtime.onMessage.addListener((msg, sender) => {
     case "snaresSeen":
       return addSnares(msg.count || 0);
 
+    case "purgeSite":
+      return purgeSite(msg.origin);
+
     case "getStats":
       return getStats();
 
@@ -296,6 +342,7 @@ browser.runtime.onInstalled.addListener(() => {
 function applyFromSettings(s) {
   V.applyTheme(s.theme);
   applyHardening(!!(s.privacy && s.privacy.harden));
+  applyBlocking(!!(s.privacy && s.privacy.block));
 }
 V.getSettings().then(applyFromSettings);
 V.onSettingsChange(applyFromSettings);

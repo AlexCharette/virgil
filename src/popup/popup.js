@@ -28,6 +28,7 @@
       config: [
         { type: "toggle", label: "Spot device fingerprinting", path: "privacy.detectFingerprinting" },
         { type: "toggle", label: "Spooky watcher alerts", path: "privacy.watcherFx" },
+        { type: "toggle", label: "Gouge out the watchers (bar them, third-party only)", path: "privacy.block" },
       ],
     },
     {
@@ -151,10 +152,13 @@
     showDetail(w);
   }
 
-  function hardenPerms() {
+  // Filter a wanted permission list to those the build actually declares
+  // (Firefox drops contentSettings, etc.), so we never request a missing one.
+  function availPerms(list) {
     const avail = browser.runtime.getManifest().optional_permissions || [];
-    return ["privacy", "contentSettings"].filter((p) => avail.includes(p));
+    return list.filter((p) => avail.includes(p));
   }
+  const hardenPerms = () => availPerms(["privacy", "contentSettings"]);
   async function toggleHarden(w) {
     const cur = !!getPath(settings, "privacy.harden");
     if (!cur) {
@@ -205,7 +209,25 @@
       if (cfg.type === "toggle") {
         inp.type = "checkbox";
         inp.checked = !!getPath(settings, cfg.path);
-        inp.addEventListener("change", () => {
+        inp.addEventListener("change", async () => {
+          // Permission-gated toggles (e.g. blocking) request on enable, drop on
+          // disable; revert the switch if the browser declines.
+          if (cfg.perm) {
+            if (inp.checked) {
+              let granted = false;
+              try {
+                granted = await browser.permissions.request({ permissions: availPerms(cfg.perm) });
+              } catch (e) {}
+              if (!granted) {
+                inp.checked = false;
+                return;
+              }
+            } else {
+              try {
+                browser.permissions.remove({ permissions: availPerms(cfg.perm) });
+              } catch (e) {}
+            }
+          }
           setPath(settings, cfg.path, inp.checked);
           save();
         });
@@ -416,6 +438,9 @@
     }
     sum.textContent = rep.count === 1 ? "1 here" : rep.count + " here";
     el.replaceChildren();
+    const dossier = document.createElement("p");
+    dossier.className = "dossier";
+    dossier.hidden = true;
     for (const cat of Object.keys(rep.byCategory)) {
       const row = document.createElement("div");
       row.className = "watcher-row";
@@ -424,10 +449,22 @@
       k.textContent = WATCHER_LABELS[cat] || cat;
       const v = document.createElement("span");
       v.className = "watcher-names";
-      v.textContent = rep.byCategory[cat].join(", ");
+      for (const name of rep.byCategory[cat]) {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "chip";
+        chip.textContent = name;
+        chip.title = "Who is this?";
+        chip.addEventListener("click", () => {
+          dossier.textContent = name + " — " + V.trackerDossier(name, cat);
+          dossier.hidden = false;
+        });
+        v.appendChild(chip);
+      }
       row.append(k, v);
       el.appendChild(row);
     }
+    el.appendChild(dossier);
   }
 
   function renderSnares(rep) {
@@ -469,6 +506,68 @@
     } catch (e) {
       render(null);
     }
+  }
+
+  // ---- site data: audit + "salt the earth" ----
+  function renderStorage(rep) {
+    const sum = $("storageSummary");
+    const body = $("storageBody");
+    if (!rep) {
+      sum.textContent = "—";
+      body.textContent = "Not scanned on this page.";
+      return;
+    }
+    const parts = [];
+    if (rep.cookies) parts.push(rep.cookies + (rep.cookies === 1 ? " cookie" : " cookies"));
+    if (rep.localStorage) parts.push(rep.localStorage + " local");
+    if (rep.sessionStorage) parts.push(rep.sessionStorage + " session");
+    const total = (rep.cookies || 0) + (rep.localStorage || 0) + (rep.sessionStorage || 0);
+    sum.textContent = total ? "stowed" : "clean";
+    body.textContent = total
+      ? "This site has stowed: " + parts.join(" · ") + "."
+      : "Nothing stowed here that the page can see.";
+  }
+  const loadStorage = () => queryActive("getStorage", renderStorage);
+
+  let purgeTimer = null;
+  function disarmPurge(btn) {
+    clearTimeout(purgeTimer);
+    btn.dataset.armed = "0";
+    btn.classList.remove("armed");
+    btn.textContent = "Salt the earth here";
+  }
+  function bindPurge() {
+    $("purge").addEventListener("click", async (e) => {
+      const btn = e.currentTarget;
+      if (btn.dataset.armed !== "1") {
+        btn.dataset.armed = "1";
+        btn.classList.add("armed");
+        btn.textContent = "Confirm — wipe this site's data?";
+        purgeTimer = setTimeout(() => disarmPurge(btn), 3500);
+        return;
+      }
+      disarmPurge(btn);
+      let granted = false;
+      try {
+        granted = await browser.permissions.request({ permissions: availPerms(["cookies", "browsingData"]) });
+      } catch (e2) {}
+      if (!granted) {
+        $("storageBody").textContent = "Virgil needs the browser's leave to clear cookies — declined.";
+        return;
+      }
+      try {
+        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+        const tab = tabs && tabs[0];
+        if (!tab || !tab.url) return;
+        const origin = new URL(tab.url).origin;
+        await browser.tabs.sendMessage(tab.id, { type: "clearStorage" }).catch(() => null);
+        await browser.runtime.sendMessage({ type: "purgeSite", origin }).catch(() => null);
+        loadStorage();
+        $("storageBody").textContent = "Salted. This site's cookies and storage are cleared.";
+      } catch (e3) {
+        $("storageBody").textContent = "Couldn't reach this page.";
+      }
+    });
   }
 
   // ---- reset (two-step) ----
@@ -516,8 +615,10 @@
     $("character").addEventListener("mouseenter", inspectChar);
     $("character").addEventListener("focus", inspectChar);
 
+    bindPurge();
     queryActive("getWatchers", renderWatchers);
     queryActive("getSnares", renderSnares);
+    loadStorage();
     browser.runtime
       .sendMessage({ type: "getStats" })
       .then((stats) => stats && renderStats(stats));

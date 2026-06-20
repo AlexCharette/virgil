@@ -26,6 +26,7 @@
       revealWatchers: true, // count trackers/replay/fingerprinters on each page
       detectFingerprinting: true, // watch for active canvas/WebGL/audio probing
       watcherFx: true, // the spooky eyes-in-the-dark indicator when watched
+      block: true, // gouge out the watchers — bar known trackers (declarativeNetRequest)
       harden: false, // flip browser privacy settings (needs optional permission)
     },
     // The Snares — name the page's dark patterns (deceptive UX).

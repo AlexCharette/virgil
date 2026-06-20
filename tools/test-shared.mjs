@@ -56,6 +56,14 @@ ok("tracker analytics", V.matchTracker("www.google-analytics.com").category === 
 ok("tracker replay name", V.matchTracker("sub.hotjar.com").name === "Hotjar");
 ok("tracker miss", V.matchTracker("example.com") === null);
 
+// dossiers + block rule
+ok("dossier named override", V.trackerDossier("Hotjar", "replay").startsWith("Records and replays"));
+ok("dossier category fallback", V.trackerDossier("Some Unknown", "ads") === V.WATCHER_CATEGORY_BLURB.ads);
+const rule = V.buildBlockRule(1);
+ok("block rule id/action", rule.id === 1 && rule.action.type === "block");
+ok("block rule third-party only", rule.condition.domainType === "thirdParty");
+ok("block rule domains from list", rule.condition.requestDomains.includes("google-analytics.com") && rule.condition.requestDomains.length === Object.keys(V.TRACKERS).length);
+
 // withDefaults — partial stored objects must preserve nested defaults
 ok("defaults from empty", eq(V.withDefaults({}), V.DEFAULT_SETTINGS));
 ok("defaults from null", eq(V.withDefaults(null), V.DEFAULT_SETTINGS));
@@ -65,6 +73,7 @@ ok("stored override kept (snares.enabled)", partial.snares.enabled === false);
 ok("nested default kept (ai.endpoint)", V.withDefaults({ ai: { apiKey: "x" } }).ai.endpoint === V.DEFAULT_SETTINGS.ai.endpoint);
 ok("top-level array preserved", eq(V.withDefaults({ pausedHosts: ["a.com"] }).pausedHosts, ["a.com"]));
 ok("blur.model nested kept", V.withDefaults({ blur: { enabled: false } }).blur.model.enabled === false);
+ok("blocking on by default", V.withDefaults({}).privacy.block === true);
 
 if (failed) {
   console.log(`\nSHARED LOGIC: ${failed} FAILED`);

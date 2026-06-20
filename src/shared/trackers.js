@@ -82,4 +82,50 @@
   V.matchTracker = function (host) {
     return V.TRACKERS[V.baseDomain(host)] || null;
   };
+
+  // --- dossiers: who a watcher is and what it takes -----------------------
+  // A category fallback covers everything; named overrides add specifics for
+  // the notable ones. Educational, plain, lightly wry.
+  V.WATCHER_CATEGORY_BLURB = {
+    analytics: "Measures what you do here and reports it back.",
+    ads: "Builds an advertising profile of you and trades on it.",
+    social: "A social network's pixel — ties this visit to your account there.",
+    replay: "Records your session — moves, scrolls, clicks — to replay later.",
+    fingerprint: "Identifies your device itself, even without cookies.",
+    tag: "A tag manager — the conductor that loads the other watchers.",
+  };
+  V.TRACKER_DOSSIERS = {
+    "Google Analytics": "Google's audience measurement — counts you, your path, and your device.",
+    "Google Tag Manager": "Loads and fires other trackers on the page's behalf.",
+    "Hotjar": "Records and replays your session: mouse, scrolls, clicks, rage-taps.",
+    "FullStory": "Full session replay — it watches the whole visit and keeps it.",
+    "LogRocket": "Session replay plus console/network capture for the site's owners.",
+    "Microsoft Clarity": "Microsoft's free session recording and heatmaps.",
+    "Meta Pixel": "Reports this visit to Facebook/Instagram for ad targeting.",
+    "TikTok Pixel": "Ties your visit to your TikTok identity for ads.",
+    "FingerprintJS": "Fingerprints your device to re-identify you without cookies.",
+    "Criteo": "Retargeting — the ads that follow you around after you leave.",
+    "Taboola": "'Around the web' content ads and the profile that feeds them.",
+    "Outbrain": "Sponsored-link recommendations and the tracking behind them.",
+    "The Trade Desk": "A demand-side platform bidding on your attention in real time.",
+    "LiveRamp": "An identity broker — stitches your IDs across sites into one profile.",
+    "Oracle BlueKai": "A data-management platform trading audience segments.",
+    "Adobe Audience Manager": "Adobe's DMP — assembles and sells audience profiles.",
+  };
+  V.trackerDossier = (name, category) =>
+    V.TRACKER_DOSSIERS[name] ||
+    V.WATCHER_CATEGORY_BLURB[category] ||
+    "A third-party watcher.";
+
+  // --- the block rule -----------------------------------------------------
+  // A single declarativeNetRequest dynamic rule barring every known tracker
+  // domain — third-party only, so a site's own first-party calls are untouched.
+  // Pure builder so it's unit-testable; the service worker applies it.
+  V.trackerDomains = () => Object.keys(V.TRACKERS);
+  V.buildBlockRule = (id) => ({
+    id,
+    priority: 1,
+    action: { type: "block" },
+    condition: { requestDomains: V.trackerDomains(), domainType: "thirdParty" },
+  });
 })(globalThis);
