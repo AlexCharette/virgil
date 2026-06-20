@@ -51,6 +51,17 @@
     );
   }
 
+  // The wayfarer's equipped wards, as charm ids — reflected on the hero.
+  function equippedCharms(s) {
+    const ids = [];
+    if (s.privacy && s.privacy.revealWatchers) ids.push("eye");
+    if (s.privacy && s.privacy.harden) ids.push("cloak");
+    if (s.snares && s.snares.enabled) ids.push("knot");
+    if (s.blur && s.blur.enabled) ids.push("veil");
+    if (s.ai && s.ai.enabled) ids.push("star");
+    return ids;
+  }
+
   function send(msg) {
     // browser.* (polyfill) returns a promise; swallow teardown/no-receiver errors.
     try {
@@ -241,16 +252,20 @@
     V.hero.mount();
     V.hero.setStyle(settings.style);
     V.hero.setWatcherFx(settings.privacy && settings.privacy.watcherFx);
+    V.hero.setCharms(equippedCharms(settings));
     if (!isExempt() && settings.blur && settings.blur.enabled && V.censor)
       V.censor.start(settings.blur);
     if (!isExempt() && settings.privacy && settings.privacy.revealWatchers && V.watchers)
       V.watchers.start({ fingerprint: settings.privacy.detectFingerprinting });
+    if (!isExempt() && settings.snares && settings.snares.enabled && V.snares)
+      V.snares.start(settings.snares);
     watchUrl();
     evaluate();
 
     V.onSettingsChange((next) => {
       if (next.style !== settings.style) V.hero.setStyle(next.style);
       if (next.theme !== settings.theme) V.hero.applyTheme(next.theme);
+      V.hero.setCharms(equippedCharms(next)); // re-light the loadout (also recolours on theme change)
       settings = next;
     });
 

@@ -279,6 +279,136 @@ video.virgil-censored {
   .virgil-web { animation: none; opacity: 0; }
 }
 
+/* The Snares sigil — a knot + count pinned to the hero (top-left, caution). */
+#virgil-snares-sigil {
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 5px 1px 4px;
+  background: var(--vg-crypt, #1b1f32);
+  border: 1px solid var(--vg-snare, #ffce5b);
+  border-radius: 9px;
+  box-shadow: 0 0 6px var(--vg-snare, #ffce5b);
+  cursor: pointer;
+}
+#virgil-snares-sigil[hidden] {
+  display: none;
+}
+#virgil-snares-sigil .virgil-knot {
+  width: 12px;
+  height: 12px;
+  display: block;
+}
+
+/* On-page snare markers — pinned over the deceptive element, reveal on hover. */
+#virgil-snares-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  pointer-events: none;
+}
+.virgil-snare {
+  position: fixed;
+  width: 18px;
+  height: 18px;
+  pointer-events: auto;
+  cursor: help;
+  filter: drop-shadow(0 0 4px var(--vg-snare, #ffce5b));
+  font-family: ui-monospace, "Cascadia Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace;
+}
+.virgil-snare .virgil-knot {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.virgil-snare-tip {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 200px;
+  background: var(--vg-crypt, #1b1f32);
+  color: var(--vg-ink, #b8cdfe);
+  border: 1px solid var(--vg-snare, #ffce5b);
+  border-radius: 6px;
+  padding: 8px 9px;
+  font-size: 11px;
+  line-height: 1.4;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  pointer-events: none;
+}
+.virgil-snare:hover .virgil-snare-tip,
+.virgil-snare:focus-within .virgil-snare-tip {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.virgil-snare-dismiss {
+  display: block;
+  margin-top: 7px;
+  font: inherit;
+  font-size: 10px;
+  color: var(--vg-inkdim, #7488f6);
+  background: transparent;
+  border: 1px solid var(--vg-stone, #252a41);
+  border-radius: 4px;
+  padding: 3px 6px;
+  cursor: pointer;
+}
+.virgil-snare-dismiss:hover {
+  color: var(--vg-snare, #ffce5b);
+  border-color: var(--vg-snare, #ffce5b);
+}
+.virgil-snare:focus-visible {
+  outline: 2px solid var(--vg-snare, #ffce5b);
+  outline-offset: 2px;
+}
+
+/* Tap the hero's snare sigil to flash the marks. */
+#virgil-snares-layer.virgil-snares-flash .virgil-snare {
+  animation: virgil-snare-flash 0.4s ease-in-out 3;
+}
+@keyframes virgil-snare-flash {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .virgil-snare-tip { transition: none; }
+  #virgil-snares-layer.virgil-snares-flash .virgil-snare { animation: none; }
+}
+
+/* Equipped-ward charms — a faint row beneath the guide (the loadout). */
+#virgil-charms {
+  position: absolute;
+  bottom: -7px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+}
+#virgil-charms[hidden] {
+  display: none;
+}
+.virgil-charm {
+  width: 9px;
+  height: 9px;
+  opacity: 0.82;
+  filter: drop-shadow(0 0 2px var(--virgil-glow));
+}
+.virgil-charm .virgil-charm-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 /* Speech bubble — a little carved-stone plaque. */
 #virgil-bubble {
   position: absolute;

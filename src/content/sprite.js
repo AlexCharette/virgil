@@ -388,4 +388,51 @@
   V.spriteDataUri = function (glowHex, styleId) {
     return "data:image/svg+xml;utf8," + encodeURIComponent(V.renderSprite(glowHex, styleId));
   };
+
+  // ---- ward charms -------------------------------------------------------
+  // Small 9x9 pixel sigils for the loadout: shown in the popup sockets/tiles
+  // and as a faint cluster on the live hero. One source for every surface.
+  const CHARM_GLYPHS = {
+    eye: [
+      ".........", "..SSSSS..", ".SSSSSSS.", "SSS...SSS", "SS.....SS",
+      "SSS...SSS", ".SSSSSSS.", "..SSSSS..", ".........",
+    ],
+    knot: [
+      "..SSSS...", ".S....S..", "S......S.", "S......S.", ".S....S..",
+      "..SSSS...", "....S....", "...S.....", "..S......",
+    ],
+    cloak: [
+      "...SSS...", "..SSSSS..", ".SS.S.SS.", ".SSSSSSS.", "SSSSSSSSS",
+      "SSSSSSSSS", ".SSSSSSS.", ".SS...SS.", ".S.....S.",
+    ],
+    veil: [
+      "SSSSSSSSS", "S.S.S.S.S", "SSSSSSSSS", ".S.S.S.S.", "S.S.S.S.S",
+      ".S.S.S.S.", "..S.S.S..", "...S.S...", "....S....",
+    ],
+    star: [
+      "....S....", "....S....", "..S.S.S..", "...SSS...", "SSSSSSSSS",
+      "...SSS...", "..S.S.S..", "....S....", "....S....",
+    ],
+  };
+  V.CHARM_GLYPHS = CHARM_GLYPHS;
+
+  V.charmSvg = function (id, color) {
+    const pat = CHARM_GLYPHS[id] || CHARM_GLYPHS.eye;
+    const svg = document.createElementNS(SVGNS, "svg");
+    svg.setAttribute("viewBox", "0 0 9 9");
+    svg.setAttribute("shape-rendering", "crispEdges");
+    svg.setAttribute("class", "virgil-charm-svg");
+    for (let y = 0; y < pat.length; y++)
+      for (let x = 0; x < pat[y].length; x++) {
+        if (pat[y][x] !== "S") continue;
+        const r = document.createElementNS(SVGNS, "rect");
+        r.setAttribute("x", x);
+        r.setAttribute("y", y);
+        r.setAttribute("width", 1);
+        r.setAttribute("height", 1);
+        r.setAttribute("fill", color || "#86e0f9");
+        svg.appendChild(r);
+      }
+    return svg;
+  };
 })(globalThis);

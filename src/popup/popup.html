@@ -8,167 +8,73 @@
   </head>
   <body>
     <div id="app">
-      <header>
-        <img id="portrait" alt="Virgil" />
+      <!-- The guide + the loadout reflected in charm sockets. -->
+      <section class="loadout">
+        <button id="character" class="character" aria-label="Virgil — his bearing">
+          <img id="portrait" alt="Virgil" />
+        </button>
         <div class="title">
           <h1>Virgil</h1>
           <p class="tagline">Your guide through the web.</p>
+          <div id="sockets" class="sockets" aria-hidden="true"></div>
         </div>
-      </header>
-
-      <!-- Master controls — always visible. -->
-      <section class="controls primary" aria-label="On watch">
-        <h2>On watch</h2>
-        <label class="row switch">
-          <span class="row-label">Virgil stands watch</span>
-          <input type="checkbox" id="enabled" />
-        </label>
-        <label class="row switch">
-          <span class="row-label">
-            Greet me on safe roads
-            <small class="gloss">A word from Virgil even when the way is clear.</small>
-          </span>
-          <input type="checkbox" id="greetOnSafe" />
-        </label>
-        <label class="row">
-          <span class="row-label">Warn after</span>
-          <span class="inline">
-            <input type="number" id="lingerMinutes" min="0" max="120" /> min
-          </span>
-        </label>
       </section>
 
-      <!-- The Watchers — live count in the summary, settings within. -->
-      <details class="panel" id="watchersPanel">
-        <summary>
-          <span class="panel-title">The Watchers</span>
-          <span id="watchersSummary" class="panel-meta">Scanning…</span>
-        </summary>
-        <div id="watchersBody" class="watchers"></div>
-        <p class="muted">Revealed all-time: <span id="watchers-total">—</span></p>
-        <label class="row switch">
-          <span class="row-label">
-            Reveal watchers on each page
-            <small class="gloss">Tally trackers the moment a page loads.</small>
-          </span>
-          <input type="checkbox" id="revealWatchers" />
-        </label>
-        <label class="row switch">
-          <span class="row-label">
-            Spot device fingerprinting
-            <small class="gloss">Catch scripts quietly measuring your device.</small>
-          </span>
-          <input type="checkbox" id="detectFingerprinting" />
-        </label>
-        <label class="row switch">
-          <span class="row-label">
-            Spooky watcher alerts
-            <small class="gloss">Eyes blink open at the page's edge when you're watched.</small>
-          </span>
-          <input type="checkbox" id="watcherFx" />
-        </label>
-        <label class="row switch">
-          <span class="row-label">Cloak my passage</span>
-          <input type="checkbox" id="harden" />
-        </label>
-        <p class="muted">
-          Blocks WebRTC IP leaks, hyperlink auditing &amp; third-party cookies
-          (and notification prompts on Chrome). Asks permission when enabled.
-        </p>
-        <p id="hardenNote" class="muted note-warn" hidden>
-          Permission declined — your passage stays uncloaked.
-        </p>
+      <!-- The wards — equip/unequip; hover or focus a tile to inspect it. -->
+      <section class="wards-sec" aria-label="Wards">
+        <h2>Wards</h2>
+        <div id="wardGrid" class="ward-grid" role="group" aria-label="Equippable wards"></div>
+        <div id="wardDetail" class="ward-detail"></div>
+      </section>
+
+      <!-- Live reconnaissance of the current page. -->
+      <details class="panel" id="roadPanel">
+        <summary><span class="panel-title">This road</span></summary>
+        <h3 class="sub">The Watchers <span id="watchersSummary" class="sub-meta">—</span></h3>
+        <div id="watchersBody" class="watchers">Not scanned on this page.</div>
+        <h3 class="sub">The Snares <span id="snaresSummary" class="sub-meta">—</span></h3>
+        <div id="snaresBody" class="watchers">Not scanned on this page.</div>
       </details>
 
-      <!-- The Shroud. -->
-      <details class="panel">
-        <summary><span class="panel-title">The Shroud</span></summary>
-        <label class="row switch">
-          <span class="row-label">
-            Shroud suggestive media
-            <small class="gloss">Blur risky images and thumbnails — click to reveal.</small>
-          </span>
-          <input type="checkbox" id="blurEnabled" />
-        </label>
-        <label class="row switch">
-          <span class="row-label">
-            Shroud everything on adult sites
-            <small class="gloss">On flagged sites, veil every image by default.</small>
-          </span>
-          <input type="checkbox" id="blurOnAdult" />
-        </label>
-        <label class="row switch">
-          <span class="row-label">
-            Shroud lewd media anywhere
-            <small class="gloss">Veil explicit media Virgil spots on any page.</small>
-          </span>
-          <input type="checkbox" id="blurHeuristics" />
-        </label>
-      </details>
-
-      <!-- The ledger — totals in the summary, breakdown within. -->
-      <details class="panel" id="ledgerPanel">
+      <!-- The Chronicle — the ledger of what's been reclaimed and revealed. -->
+      <details class="panel" id="chroniclePanel">
         <summary>
-          <span class="panel-title">The ledger</span>
+          <span class="panel-title">The Chronicle</span>
           <span id="ledgerSummary" class="panel-meta">—</span>
         </summary>
         <ul class="ledger" id="ledger"></ul>
+        <p class="muted">
+          Watchers revealed: <span id="watchers-total">—</span> · Snares revealed:
+          <span id="snares-total">—</span>
+        </p>
+        <button id="reset" class="ghost" data-armed="0">Reset the chronicle</button>
       </details>
 
-      <!-- Appearance. -->
-      <details class="panel">
-        <summary><span class="panel-title">Appearance</span></summary>
+      <!-- Attune — choose the guide and the realm's hue. -->
+      <details class="panel" id="attunePanel">
+        <summary><span class="panel-title">Attune</span></summary>
         <div class="picker">
-          <h3>Colour scheme</h3>
-          <div id="themeGrid" class="theme-grid"></div>
-        </div>
-        <div class="picker">
-          <h3>Choose your guide</h3>
+          <h3>Your guide</h3>
           <div id="styleGrid" class="style-grid"></div>
         </div>
+        <div class="picker">
+          <h3>The realm</h3>
+          <div id="themeGrid" class="theme-grid"></div>
+        </div>
       </details>
 
-      <!-- Allowed sites & pages. -->
+      <!-- Safe passages — the per-site/per-page allowlist. -->
       <details class="panel" id="allowedPanel">
         <summary>
-          <span class="panel-title">Allowed sites &amp; pages</span>
+          <span class="panel-title">Safe passages</span>
           <span id="allowedCount" class="panel-meta"></span>
         </summary>
         <ul id="pausedList"></ul>
         <p id="pausedEmpty" class="muted">None — he watches everywhere.</p>
       </details>
 
-      <!-- Oracle (optional AI). -->
-      <details class="panel ai">
-        <summary><span class="panel-title">Oracle (optional AI)</span></summary>
-        <p class="muted">
-          For pages Virgil can't name on his own, consult an
-          OpenRouter-compatible model. Your key stays on this device.
-        </p>
-        <label class="row switch">
-          <span class="row-label">Consult the Oracle</span>
-          <input type="checkbox" id="aiEnabled" />
-        </label>
-        <label class="field">
-          <span>Endpoint</span>
-          <input
-            type="text"
-            id="aiEndpoint"
-            placeholder="https://openrouter.ai/api/v1/chat/completions"
-          />
-        </label>
-        <label class="field">
-          <span>Model</span>
-          <input type="text" id="aiModel" placeholder="openai/gpt-4o-mini" />
-        </label>
-        <label class="field">
-          <span>API key</span>
-          <input type="password" id="aiKey" placeholder="sk-or-..." />
-        </label>
-      </details>
-
       <footer>
-        <button id="reset" class="ghost" data-armed="0">Reset the ledger</button>
+        <span class="footer-hint">Hover a ward to inspect it.</span>
         <span id="saved" class="saved">saved</span>
       </footer>
     </div>
@@ -177,6 +83,7 @@
     <script src="../shared/palette.js"></script>
     <script src="../shared/categories.js"></script>
     <script src="../shared/settings.js"></script>
+    <script src="../shared/patterns.js"></script>
     <script src="../content/sprite.js"></script>
     <script src="popup.js"></script>
   </body>

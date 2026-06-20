@@ -9,7 +9,9 @@
   const H = (V.hero = {});
 
   let root, sprite, bubble, bubbleName, bubbleText, bubbleActions, veil, eyes, sigil;
-  let light, embers;
+  let light, embers, snareSigil, charmsLayer;
+  let snareCount = 0;
+  let snareOnClick = null;
   let speakTimer = null;
   let eyesTimer = null;
   let currentGlow = P.glow;
@@ -257,6 +259,23 @@
     sigil.hidden = true;
     root.appendChild(sigil);
 
+    // The Snares indicator — a pixel knot + count; tap to find the marks.
+    snareSigil = document.createElement("div");
+    snareSigil.id = "virgil-snares-sigil";
+    snareSigil.hidden = true;
+    snareSigil.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (snareOnClick) snareOnClick();
+    });
+    root.appendChild(snareSigil);
+
+    // Equipped-ward charms — a faint cluster reflecting the wayfarer's loadout.
+    charmsLayer = document.createElement("div");
+    charmsLayer.id = "virgil-charms";
+    charmsLayer.hidden = true;
+    root.appendChild(charmsLayer);
+    renderCharms();
+
     const host = document.body || document.documentElement;
     host.appendChild(veil);
     host.appendChild(eyes);
@@ -311,6 +330,52 @@
   H.setWatcherFx = function (on) {
     fxEnabled = !!on;
     updateSigil();
+  };
+
+  // The Snares sigil — count of dark patterns marked on the page; tap to flash
+  // the marks. Driven by content/snares.js. Caution-coloured, never alarming.
+  function updateSnareSigil() {
+    if (!snareSigil) return;
+    if (snareCount > 0) {
+      const color = (V.severityColor && V.severityColor.caution) || "#ffce5b";
+      snareSigil.style.setProperty("--vg-snare", color);
+      snareSigil.replaceChildren(V.knotSvg(color));
+      const num = document.createElement("span");
+      num.className = "virgil-sigil-num";
+      num.textContent = snareCount;
+      snareSigil.appendChild(num);
+      snareSigil.title =
+        snareCount + (snareCount === 1 ? " snare" : " snares") +
+        " marked on this page — tap to find them.";
+      snareSigil.hidden = false;
+    } else {
+      snareSigil.hidden = true;
+    }
+  }
+
+  H.setSnares = function (n, onClick) {
+    snareCount = n || 0;
+    if (onClick) snareOnClick = onClick;
+    updateSnareSigil();
+  };
+
+  // The loadout, reflected on the guide: a faint row of equipped-ward charms.
+  let charmIds = [];
+  function renderCharms() {
+    if (!charmsLayer) return;
+    charmsLayer.replaceChildren();
+    const color = (V.palette && V.palette.glow) || "#86e0f9";
+    for (const id of charmIds) {
+      const c = document.createElement("span");
+      c.className = "virgil-charm";
+      c.appendChild(V.charmSvg(id, color));
+      charmsLayer.appendChild(c);
+    }
+    charmsLayer.hidden = charmIds.length === 0;
+  }
+  H.setCharms = function (ids) {
+    charmIds = Array.isArray(ids) ? ids : [];
+    renderCharms();
   };
 
   // Called by the watcher detector with the running count. First time a watched
